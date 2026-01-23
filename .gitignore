@@ -1,0 +1,9 @@
+# 文件夹
+assets/
+build/
+.vscode/
+
+# 文件
+*.exe
+*.ilk
+*.pdb
