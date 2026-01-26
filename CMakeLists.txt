@@ -15,6 +15,9 @@ endif()
 
 # 查找并载入cmake预设
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 # 设置可执行文件名字
 set(TARGET ${PROJECT_NAME}_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION})
@@ -24,7 +27,8 @@ set(SOURCES "./src/main.cpp")
 add_executable(${TARGET} ${SOURCES})
 
 # 添加要链接的库
-target_link_libraries(${TARGET} SDL2::SDL2main SDL2::SDL2)
+#target_link_libraries(${TARGET} SDL2::SDL2main SDL2::SDL2)
+target_link_libraries(${TARGET} ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf)
 
 # 设置编译输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin)

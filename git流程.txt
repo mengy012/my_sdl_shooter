@@ -1,0 +1,13 @@
+git checkout main
+git merge dev        # 确认稳定
+git tag -a v0.3.0 -m "Stable build"
+git push origin main
+git push origin v0.3.0
+
+commit提交信息格式
+feat: 新功能
+fix: 修 bug
+refactor: 重构
+docs:文档
+cleanup: 删除无用代码
+style:代码格式
