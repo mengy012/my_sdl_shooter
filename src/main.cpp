@@ -89,17 +89,21 @@ int main(int argc, char* argv[])
     // 用于显示每秒帧数的texture,rect
     SDL_Texture* fps_texture{NULL};
     SDL_Rect fps_showRect{};
+
+    // 循环运行状态
+    bool is_running{true};
     // 绘制循环
-    while (true)
+    while (is_running)
     {
         SDL_Event event;
-        if (SDL_PollEvent(&event))
+        while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                break;
+                is_running = false;
             }
         }
+        
         // 清屏
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
