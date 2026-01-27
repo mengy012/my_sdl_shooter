@@ -22,7 +22,11 @@ find_package(SDL2_ttf REQUIRED)
 # 设置可执行文件名字
 set(TARGET ${PROJECT_NAME}_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION})
 # 设置待编译cpp源文件合集
-set(SOURCES "./src/main.cpp")
+set(SOURCES "./src/main.cpp"
+            "./src/game.cpp"
+            "./src/scene.cpp"
+            "./src/scene_main.cpp"
+)
 # 添加可执行文件
 add_executable(${TARGET} ${SOURCES})
 
