@@ -1,65 +1,11 @@
 #include "game.h"
-#include "scene_main.h"
+#include "./scene/scene_main.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
-Game::Game()
-{
-    // sdl初始化
-    if (SDL_Init(SDL_INIT_EVERYTHING))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl init failed %s\n", SDL_GetError());
-        is_running = false;
-        return;
-    }
-    // 创建窗口
-    window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                  window_width, window_height, SDL_WINDOW_RESIZABLE));
-    if (!window)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl window init failed %s\n", SDL_GetError());
-        is_running = false;
-    }
-    // 创建渲染器
-    renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
-    if (!renderer)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl renderer init failed %s\n", SDL_GetError());
-        is_running = false;
-    }
-
-    // 初始化sdl_image
-    if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) != (IMG_INIT_JPG | IMG_INIT_PNG))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl image init failed %s\n", SDL_GetError());
-        is_running = false;
-    }
-    // 初始化sdl_mixer
-    if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) != (MIX_INIT_MP3 | MIX_INIT_OGG))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl mixer init failed %s\n", SDL_GetError());
-        is_running = false;
-    }
-    // 初始化sdl_ttf
-    if (TTF_Init())
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl ttf init failed %s\n", SDL_GetError());
-        is_running = false;
-    }
-    else
-    {
-        font.reset(TTF_OpenFont("../assets/font/VonwaonBitmap-12px.ttf", 24));
-        if (!font)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_openfont failed %s\n", SDL_GetError());
-            is_running = false;
-        }
-    }
-    // 创建场景
-    current_scene = std::make_unique<SceneMain>();
-}
+Game::Game() = default;
 
 Game& Game::instance()
 {
@@ -156,8 +102,81 @@ void Game::render()
     SDL_RenderPresent(renderer.get());
 }
 
+SDL_Renderer* Game::getRenderer() const
+{
+    return renderer.get();
+}
+
+bool& Game::getIsRunning()
+{
+    return is_running;
+}
+
+int Game::get_window_width() const
+{
+    return window_width;
+}
+
+int Game::get_window_height() const
+{
+    return window_height;
+}
+
 // 资源已使用智能指针管理,可能删除
 void Game::clean() {}
 
-// init功能在构造函数已实现,可能删除
-void Game::init() {}
+void Game::init()
+{ // sdl初始化
+    if (SDL_Init(SDL_INIT_EVERYTHING))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl init failed %s\n", SDL_GetError());
+        is_running = false;
+        return;
+    }
+    // 创建窗口
+    window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                  window_width, window_height, SDL_WINDOW_RESIZABLE));
+    if (!window)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl window init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+    // 创建渲染器
+    renderer.reset(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
+    if (!renderer)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl renderer init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+
+    // 初始化sdl_image
+    if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) != (IMG_INIT_JPG | IMG_INIT_PNG))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl image init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+    // 初始化sdl_mixer
+    if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) != (MIX_INIT_MP3 | MIX_INIT_OGG))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl mixer init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+    // 初始化sdl_ttf
+    if (TTF_Init())
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl ttf init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+    else
+    {
+        font.reset(TTF_OpenFont("../assets/font/VonwaonBitmap-12px.ttf", 24));
+        if (!font)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_openfont failed %s\n", SDL_GetError());
+            is_running = false;
+        }
+    }
+    // 创建场景
+    current_scene = std::make_unique<SceneMain>();
+    current_scene->init();
+}

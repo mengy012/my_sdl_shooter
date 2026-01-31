@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene.h"
+#include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <memory>
@@ -58,6 +58,11 @@ class Game
     void handleEvent(SDL_Event& event);
     void update();
     void render();
+
+    SDL_Renderer* getRenderer() const;
+    bool& getIsRunning();
+    int get_window_width() const;
+    int get_window_height() const;
 
   private:
     Game();

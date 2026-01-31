@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../object/player.h"
 #include "scene.h"
 
 // 主场景
@@ -16,4 +17,5 @@ class SceneMain : public Scene
     void clean() override;
 
   private:
+    Player player; // 玩家飞机
 };

@@ -24,8 +24,9 @@ set(TARGET ${PROJECT_NAME}_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION})
 # 设置待编译cpp源文件合集
 set(SOURCES "./src/main.cpp"
             "./src/game.cpp"
-            "./src/scene.cpp"
-            "./src/scene_main.cpp"
+            "./src/scene/scene.cpp"
+            "./src/scene/scene_main.cpp"
+            "./src/object/player.cpp"
 )
 # 添加可执行文件
 add_executable(${TARGET} ${SOURCES})
