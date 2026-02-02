@@ -86,6 +86,7 @@ void Game::update()
 
 void Game::render()
 {
+    SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
     SDL_RenderClear(renderer.get());
     // 测试
     SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../assets/image/bonus_life.png");
