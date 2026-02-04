@@ -3,6 +3,7 @@
 #include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <chrono>
 #include <memory>
 
 class DeleteWindow // sdl_window删除器
@@ -75,4 +76,11 @@ class Game
     std::unique_ptr<TTF_Font, DeleteFont> font;             // 字体
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
+
+    int fps = 160;                        // 游戏帧数
+    std::chrono::microseconds frame_time; // 游戏帧数对应帧时间
+    double current_fps;                   // 实时游戏帧数
+
+    std::chrono::steady_clock::time_point frame_start; // 帧起始时刻
+    std::chrono::microseconds delta_time;              // 实际每帧用时,控制飞机速度
 };

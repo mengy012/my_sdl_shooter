@@ -11,9 +11,9 @@ void SceneMain::init() {}
 
 void SceneMain::handleEvent(SDL_Event& event) {}
 
-void SceneMain::update()
+void SceneMain::update(double delta_time)
 {
-    player.keyBoardControl();
+    player.keyBoardControl(delta_time);
 }
 
 void SceneMain::render()

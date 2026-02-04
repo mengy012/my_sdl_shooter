@@ -4,6 +4,9 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <string>
+
+using namespace std::chrono_literals;
 
 Game::Game() = default;
 
@@ -27,14 +30,47 @@ void Game::run()
     Mix_Music* music = Mix_LoadMUS("../assets/music/03_Racing_Through_Asteroids_Loop.ogg");
     Mix_PlayMusic(music, -1);
 
+    uint32_t fps_count{0};
+    auto fps_count_time_start = std::chrono::steady_clock::now();
     while (is_running)
     {
+        frame_start = std::chrono::steady_clock::now();
+
         SDL_Event event;
         handleEvent(event); // 事件处理
 
         update(); // 游戏逻辑更新
 
         render(); // 游戏画面更新
+        fps_count++;
+        auto frame_end = std::chrono::steady_clock::now();
+        // 记录每秒fps
+        auto fps_count_elapsed =
+            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - fps_count_time_start);
+        if (fps_count_elapsed >= 1s)
+        {
+            current_fps = fps_count / std::chrono::duration_cast<std::chrono::duration<double>>(
+                                          fps_count_elapsed)
+                                          .count();
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "fps: %f", current_fps);
+            fps_count_time_start = frame_end;
+            fps_count = 0;
+        }
+        // 控制帧率
+        auto elapsed =
+            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);
+        if (elapsed <= frame_time)
+        {
+            delta_time = frame_time;
+            auto sleep_time =
+                std::chrono::duration_cast<std::chrono::milliseconds>(frame_time - elapsed);
+
+            SDL_Delay(static_cast<uint32_t>(sleep_time.count()));
+        }
+        else
+        {
+            delta_time = elapsed;
+        }
     }
 }
 
@@ -81,7 +117,8 @@ void Game::handleEvent(SDL_Event& event)
 
 void Game::update()
 {
-    current_scene->update();
+    current_scene->update(
+        std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
 }
 
 void Game::render()
@@ -94,8 +131,15 @@ void Game::render()
     SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
 
     SDL_Color white{255, 255, 255, 255};
-    SDL_Surface* surface_text{TTF_RenderUTF8_Blended(font.get(), "hello,世界", white)};
-    SDL_Rect text{200, 200, surface_text->w, surface_text->h};
+    std::string cur_fps_text;
+    {
+        cur_fps_text += "fps: " + std::to_string(current_fps);
+        auto pos = cur_fps_text.find('.');
+        pos += 3;
+        cur_fps_text = cur_fps_text.substr(0, pos);
+    }
+    SDL_Surface* surface_text{TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white)};
+    SDL_Rect text{0, 0, surface_text->w, surface_text->h};
     SDL_Texture* texture_text{SDL_CreateTextureFromSurface(renderer.get(), surface_text)};
     SDL_RenderCopy(renderer.get(), texture_text, NULL, &text);
 
@@ -180,4 +224,7 @@ void Game::init()
     // 创建场景
     current_scene = std::make_unique<SceneMain>();
     current_scene->init();
+
+    // 计算游戏帧数对应帧时间
+    frame_time = std::chrono::duration_cast<std::chrono::microseconds>(1s) / fps;
 }

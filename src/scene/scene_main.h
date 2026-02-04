@@ -12,7 +12,7 @@ class SceneMain : public Scene
 
     void init() override;
     void handleEvent(SDL_Event& event) override;
-    void update() override;
+    void update(double delta_time) override;
     void render() override;
     void clean() override;
 

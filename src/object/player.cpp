@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <algorithm>
+#include <cmath>
 
 Player::Player()
 {
@@ -43,27 +44,50 @@ int Player::getHeight()
     return height;
 }
 
-void Player::keyBoardControl()
+void Player::keyBoardControl(double delta_time)
 {
     auto keyboard_state = SDL_GetKeyboardState(NULL);
 
-    if (keyboard_state[SDL_SCANCODE_W])
+    float cur_accel = accel;
+    if (keyboard_state[SDL_SCANCODE_LSHIFT])
     {
-        position.y -= 0.4f;
-    }
-    if (keyboard_state[SDL_SCANCODE_A])
-    {
-        position.x -= 0.4f;
-    }
-    if (keyboard_state[SDL_SCANCODE_S])
-    {
-        position.y += 0.4f;
-    }
-    if (keyboard_state[SDL_SCANCODE_D])
-    {
-        position.x += 0.4f;
+        cur_accel *= 3.f;
     }
 
+    // 1. 输入方向
+    float dir_x = 0.f;
+    float dir_y = 0.f;
+
+    if (keyboard_state[SDL_SCANCODE_W])
+        dir_y -= 1.f;
+    if (keyboard_state[SDL_SCANCODE_S])
+        dir_y += 1.f;
+    if (keyboard_state[SDL_SCANCODE_A])
+        dir_x -= 1.f;
+    if (keyboard_state[SDL_SCANCODE_D])
+        dir_x += 1.f;
+
+    // 2. 归一化（防止斜向更快）
+    float len = std::hypot(dir_x, dir_y);
+    if (len > 0.f)
+    {
+        dir_x /= len;
+        dir_y /= len;
+    }
+
+    // 3. 加速
+    velocity.x += dir_x * cur_accel * delta_time;
+    velocity.y += dir_y * cur_accel * delta_time;
+
+    // 4. 阻尼（平滑减速）
+    float damp = std::exp(-damping * delta_time);
+    velocity.x *= damp;
+    velocity.y *= damp;
+
+    // 5. 更新位置
+    position.x += velocity.x * delta_time;
+    position.y += velocity.y * delta_time;
+    // 6. 边界控制
     position.x = std::clamp(position.x, 0.f,
                             static_cast<float>(Game::instance().get_window_width()) - width);
     position.y = std::clamp(position.y, 0.f,
