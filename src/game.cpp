@@ -26,9 +26,9 @@ Game::~Game()
 
 void Game::run()
 { // 测试
-    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048);
-    Mix_Music* music = Mix_LoadMUS("../assets/music/03_Racing_Through_Asteroids_Loop.ogg");
-    Mix_PlayMusic(music, -1);
+    // Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048);
+    // Mix_Music* music = Mix_LoadMUS("../assets/music/03_Racing_Through_Asteroids_Loop.ogg");
+    // Mix_PlayMusic(music, -1);
 
     uint32_t fps_count{0};
     auto fps_count_time_start = std::chrono::steady_clock::now();
@@ -44,32 +44,31 @@ void Game::run()
         render(); // 游戏画面更新
         fps_count++;
         auto frame_end = std::chrono::steady_clock::now();
+
+        // 控制帧率
+        auto elapsed =
+            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);
+        if (elapsed < frame_time)
+        {
+            auto sleep_time =
+                std::chrono::duration_cast<std::chrono::milliseconds>(frame_time - elapsed);
+            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "sleep %d ms", sleep_time.count());
+            SDL_Delay(static_cast<uint32_t>(sleep_time.count()));
+        }
+
+        auto real_frame_end = std::chrono::steady_clock::now();
+        delta_time =
+            std::chrono::duration_cast<std::chrono::microseconds>(real_frame_end - frame_start);
         // 记录每秒fps
-        auto fps_count_elapsed =
-            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - fps_count_time_start);
+        auto fps_count_elapsed = real_frame_end - fps_count_time_start;
         if (fps_count_elapsed >= 1s)
         {
             current_fps = fps_count / std::chrono::duration_cast<std::chrono::duration<double>>(
                                           fps_count_elapsed)
                                           .count();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "fps: %f", current_fps);
-            fps_count_time_start = frame_end;
+            fps_count_time_start = real_frame_end;
             fps_count = 0;
-        }
-        // 控制帧率
-        auto elapsed =
-            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);
-        if (elapsed <= frame_time)
-        {
-            delta_time = frame_time;
-            auto sleep_time =
-                std::chrono::duration_cast<std::chrono::milliseconds>(frame_time - elapsed);
-
-            SDL_Delay(static_cast<uint32_t>(sleep_time.count()));
-        }
-        else
-        {
-            delta_time = elapsed;
         }
     }
 }
@@ -105,10 +104,10 @@ void Game::handleEvent(SDL_Event& event)
             {
                 is_running = false;
             }
-            else if (event.key.keysym.sym == SDLK_d)
-            { // 测试
-                SDL_LogDebug(SDL_LOG_CATEGORY_TEST, "press d");
-            }
+            // else if (event.key.keysym.sym == SDLK_d)
+            // { // 测试
+            //     SDL_LogDebug(SDL_LOG_CATEGORY_TEST, "press d");
+            // }
             break;
         }
         current_scene->handleEvent(event);
@@ -126,8 +125,8 @@ void Game::render()
     SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
     SDL_RenderClear(renderer.get());
     // 测试
-    SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../assets/image/bonus_life.png");
-    SDL_Rect img{0, 0, 100, 100};
+    SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../assets/image/pause.png");
+    SDL_Rect img{window_width - 48, 0, 48, 48};
     SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
 
     SDL_Color white{255, 255, 255, 255};
@@ -152,6 +151,11 @@ SDL_Renderer* Game::getRenderer() const
     return renderer.get();
 }
 
+TTF_Font* Game::getFont() const
+{
+    return font.get();
+}
+
 bool& Game::getIsRunning()
 {
     return is_running;
@@ -167,16 +171,20 @@ int Game::get_window_height() const
     return window_height;
 }
 
+void Game::setLogCategoryPriority(SDL_LogCategory category, SDL_LogPriority priority)
+{
+    SDL_LogSetPriority(category, priority);
+}
+
 // 资源已使用智能指针管理,可能删除
 void Game::clean() {}
 
-void Game::init()
+Game& Game::init()
 { // sdl初始化
     if (SDL_Init(SDL_INIT_EVERYTHING))
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl init failed %s\n", SDL_GetError());
         is_running = false;
-        return;
     }
     // 创建窗口
     window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -227,4 +235,6 @@ void Game::init()
 
     // 计算游戏帧数对应帧时间
     frame_time = std::chrono::duration_cast<std::chrono::microseconds>(1s) / fps;
+
+    return *this;
 }

@@ -42,6 +42,28 @@ class DeleteFont // ttf_font删除器
     }
 };
 
+struct DeleteTexture // 纹理删除器
+{
+    void operator()(SDL_Texture* texture) const noexcept
+    {
+        if (texture)
+        {
+            SDL_DestroyTexture(texture);
+        }
+    }
+};
+
+struct DeleteSurface
+{
+    void operator()(SDL_Surface* surface) const noexcept
+    {
+        if (surface)
+        {
+            SDL_FreeSurface(surface);
+        }
+    }
+};
+
 class Game
 {
   public:
@@ -51,7 +73,7 @@ class Game
     Game(Game&&) = delete;
     Game& operator=(Game&&) = delete;
 
-    void init();
+    Game& init();
     void run();
     void changeScene(std::unique_ptr<Scene> Scene);
     void clean();
@@ -61,9 +83,13 @@ class Game
     void render();
 
     SDL_Renderer* getRenderer() const;
+    TTF_Font* getFont() const;
     bool& getIsRunning();
     int get_window_width() const;
     int get_window_height() const;
+
+    // 设置日志种类级别
+    void setLogCategoryPriority(SDL_LogCategory category, SDL_LogPriority priority);
 
   private:
     Game();

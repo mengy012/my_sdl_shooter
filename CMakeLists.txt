@@ -27,6 +27,7 @@ set(SOURCES "./src/main.cpp"
             "./src/scene/scene.cpp"
             "./src/scene/scene_main.cpp"
             "./src/object/player.cpp"
+            "./src/object/button_pause.cpp"
 )
 # 添加可执行文件
 add_executable(${TARGET} ${SOURCES})

@@ -44,6 +44,14 @@ int Player::getHeight()
     return height;
 }
 
+void Player::render(SDL_Renderer* renderer)
+{
+
+    SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
+
+    SDL_RenderCopy(renderer, texture.get(), NULL, &player_rect);
+}
+
 void Player::keyBoardControl(double delta_time)
 {
     auto keyboard_state = SDL_GetKeyboardState(NULL);
