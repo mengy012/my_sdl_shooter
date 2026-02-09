@@ -4,7 +4,7 @@
 
 ButtonPause::ButtonPause()
 {
-    texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../assets/image/pause.png"));
+    texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/pause.png"));
     if (!texture)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load pause button texture: %s\n",

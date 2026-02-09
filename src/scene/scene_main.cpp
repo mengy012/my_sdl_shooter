@@ -17,7 +17,7 @@ void SceneMain::updatePauseTextLayout()
     std::string_view pause_text("游戏已暂停");
     std::unique_ptr<SDL_Texture, DeleteTexture> continue_picture;
     continue_picture.reset(
-        IMG_LoadTexture(Game::instance().getRenderer(), "../assets/image/play_fill.png"));
+        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
     if (!continue_picture)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue picture: %s\n",
@@ -78,7 +78,7 @@ void SceneMain::render()
 {
     // 测试
     // std::unique_ptr<SDL_Texture, DeleteTexture> background_texture(
-    //     IMG_LoadTexture(Game::instance().getRenderer(), "../assets/image/bg.png"));
+    //     IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bg.png"));
     // if (!background_texture)
     // {
     //     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "load background img failed %s\n", IMG_GetError());
@@ -111,7 +111,7 @@ void SceneMain::render()
 
         std::unique_ptr<SDL_Texture, DeleteTexture> continue_picture;
         continue_picture.reset(
-            IMG_LoadTexture(Game::instance().getRenderer(), "../assets/image/play_fill.png"));
+            IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
         if (!continue_picture)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue picture: %s\n",

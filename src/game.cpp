@@ -125,9 +125,9 @@ void Game::render()
     SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
     SDL_RenderClear(renderer.get());
     // 测试
-    SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../assets/image/pause.png");
-    SDL_Rect img{window_width - 48, 0, 48, 48};
-    SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
+    // SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../../assets/image/pause.png");
+    // SDL_Rect img{window_width - 48, 0, 48, 48};
+    // SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
 
     SDL_Color white{255, 255, 255, 255};
     std::string cur_fps_text;
@@ -222,7 +222,7 @@ Game& Game::init()
     }
     else
     {
-        font.reset(TTF_OpenFont("../assets/font/VonwaonBitmap-12px.ttf", 24));
+        font.reset(TTF_OpenFont("../../assets/font/VonwaonBitmap-12px.ttf", 24));
         if (!font)
         {
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_openfont failed %s\n", SDL_GetError());

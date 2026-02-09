@@ -7,7 +7,8 @@
 
 Player::Player()
 {
-    texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../assets/image/SpaceShip.png"));
+    texture.reset(
+        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/SpaceShip.png"));
     if (!texture)
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "load spaceship img failed %s\n", IMG_GetError());
