@@ -18,6 +18,12 @@ Game& Game::instance()
 
 Game::~Game()
 {
+    // sdl资源释放一定要在sdl_quit之前,否则可能会崩溃(坑死我了😡)
+    current_scene.reset();
+    font.reset();
+    renderer.reset();
+    window.reset();
+
     IMG_Quit();
     Mix_Quit();
     TTF_Quit();
@@ -137,10 +143,18 @@ void Game::render()
         pos += 3;
         cur_fps_text = cur_fps_text.substr(0, pos);
     }
-    SDL_Surface* surface_text{TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white)};
-    SDL_Rect text{0, 0, surface_text->w, surface_text->h};
-    SDL_Texture* texture_text{SDL_CreateTextureFromSurface(renderer.get(), surface_text)};
-    SDL_RenderCopy(renderer.get(), texture_text, NULL, &text);
+    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(
+        TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white));
+    if (surface_text)
+    {
+        SDL_Rect text{0, 0, surface_text->w, surface_text->h};
+        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(
+            SDL_CreateTextureFromSurface(renderer.get(), surface_text.get()));
+        if (texture_text)
+        {
+            SDL_RenderCopy(renderer.get(), texture_text.get(), NULL, &text);
+        }
+    }
 
     current_scene->render();
     SDL_RenderPresent(renderer.get());

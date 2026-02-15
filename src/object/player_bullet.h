@@ -1,0 +1,32 @@
+#pragma once
+
+#include "../game.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <memory>
+
+class PlayerBullet
+{
+  public:
+    PlayerBullet(
+        float x, float y,
+        const PlayerBullet& template_bullet); // 每次发射子弹时调用,传入玩家飞机位置和子弹对象模板
+    PlayerBullet();                           //
+    ~PlayerBullet();
+
+    SDL_FPoint& getPosition();
+    int getWidth() const;
+    int getHeight() const;
+
+    void render(SDL_Renderer* renderer);
+    void update(double delta_time); // 更新子弹位置
+
+  private:
+    SDL_FPoint position; // 子弹位置
+    int width{0};        // 子弹宽度
+    int height{0};       // 子弹高度
+    float speed{500.f};  // 子弹速度（像素 / s）
+
+    SDL_Texture* texture; // 子弹纹理
+    static int bullet_count;  // 已创建的子弹数量,当值为0时释放子弹纹理
+};

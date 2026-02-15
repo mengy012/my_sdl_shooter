@@ -3,6 +3,9 @@ build/
 .vscode/
 
 # 文件
+*.obj
+*.lib
+*.dll
 *.exe
 *.ilk
 *.pdb

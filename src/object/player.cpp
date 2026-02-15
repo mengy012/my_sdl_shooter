@@ -101,4 +101,45 @@ void Player::keyBoardControl(double delta_time)
                             static_cast<float>(Game::instance().get_window_width()) - width);
     position.y = std::clamp(position.y, 0.f,
                             static_cast<float>(Game::instance().get_window_height()) - height);
+
+    // 控制子弹发射
+    if (keyboard_state[SDL_SCANCODE_J])
+    {
+        auto now = std::chrono::steady_clock::now();
+        if (now - last_shoot_time >= shoot_cooldown)
+        {
+            shoot();
+            last_shoot_time = now;
+        }
+    }
+}
+
+void Player::shoot()
+{
+    // 以玩家飞机位置为基础创建子弹对象
+    float bullet_x = position.x + width / 2.f - bullet_template.getWidth() / 2.f;
+    float bullet_y = position.y;
+
+    bullets.emplace_back(bullet_x, bullet_y, bullet_template);
+}
+
+void Player::updateBullets(double delta_time)
+{
+    for (auto& bullet : bullets)
+    {
+        bullet.update(delta_time);
+    }
+
+    // 移除飞出屏幕的子弹
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](PlayerBullet& b)
+                                 { return b.getPosition().y + b.getHeight() < 0; }),
+                  bullets.end());
+}
+
+void Player::renderBullets(SDL_Renderer* renderer)
+{
+    for (auto& bullet : bullets)
+    {
+        bullet.render(renderer);
+    }
 }

@@ -72,6 +72,7 @@ void SceneMain::update(double delta_time)
         return;
     }
     player.keyBoardControl(delta_time);
+    player.updateBullets(delta_time);
 }
 
 void SceneMain::render()
@@ -88,6 +89,7 @@ void SceneMain::render()
     // SDL_RenderCopy(Game::instance().getRenderer(), background_texture.get(), NULL, &bg_rect);
     // SDL_SetTextureColorMod(player.texture.get(), 100, 100, 100);
 
+    player.renderBullets(Game::instance().getRenderer());
     player.render(Game::instance().getRenderer());
     pauseButton.render(Game::instance().getRenderer());
 

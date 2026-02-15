@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(my_sdl_shooter VERSION 0.1.0 LANGUAGES C CXX)
 
 # ----------------------------
@@ -18,30 +18,38 @@ find_package(SDL2_ttf REQUIRED)
 # ----------------------------
 # 源文件
 # ----------------------------
-set(SOURCES
-    src/main.cpp
+set(ENGINE_SOURCES
+    
     src/game.cpp
     src/scene/scene.cpp
     src/scene/scene_main.cpp
     src/object/player.cpp
     src/object/button_pause.cpp
+    src/object/player_bullet.cpp
 )
 
+# 游戏库 游戏在这里实现
+add_library(engine STATIC ${ENGINE_SOURCES})
+target_include_directories(engine PUBLIC src)
+target_link_libraries(engine
+    PUBLIC
+        SDL2::SDL2
+        SDL2::SDL2main
+        SDL2_image::SDL2_image
+        SDL2_mixer::SDL2_mixer
+        SDL2_ttf::SDL2_ttf
+)
 # ----------------------------
 # 可执行目标
 # ----------------------------
-add_executable(my_sdl_shooter ${SOURCES})
+add_executable(my_sdl_shooter src/main.cpp)
 
 # ----------------------------
 # 链接库
 # ----------------------------
 target_link_libraries(my_sdl_shooter
     PRIVATE
-        SDL2::SDL2
-        SDL2::SDL2main
-        SDL2_image::SDL2_image
-        SDL2_mixer::SDL2_mixer
-        SDL2_ttf::SDL2_ttf
+        engine
 )
 
 # ----------------------------
@@ -61,10 +69,29 @@ else()
     )
 endif()
 
+if (MSVC)
+    target_compile_options(engine PRIVATE
+        /W4 /utf-8
+        $<$<CONFIG:Debug>:/Od /Zi>
+        $<$<CONFIG:Release>:/O2>
+    )
+else()
+    target_compile_options(engine PRIVATE
+        -Wall -Wextra -Wpedantic
+        $<$<CONFIG:Debug>:-g>
+        $<$<CONFIG:Release>:-O3>
+    )
+endif()
+
 # ----------------------------
 # Debug / Release 宏
 # ----------------------------
 target_compile_definitions(my_sdl_shooter PRIVATE
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Release>:NDEBUG>
+)
+
+target_compile_definitions(engine PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
@@ -75,4 +102,9 @@ target_compile_definitions(my_sdl_shooter PRIVATE
 set_target_properties(my_sdl_shooter PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/bin/Debug
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release
+)
+
+set_target_properties(engine PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/bin/Debug
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release
 )
