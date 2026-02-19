@@ -27,6 +27,5 @@ class PlayerBullet
     int height{0};       // 子弹高度
     float speed{500.f};  // 子弹速度（像素 / s）
 
-    SDL_Texture* texture; // 子弹纹理
-    static int bullet_count;  // 已创建的子弹数量,当值为0时释放子弹纹理
+    std::shared_ptr<SDL_Texture> texture; // 子弹纹理
 };

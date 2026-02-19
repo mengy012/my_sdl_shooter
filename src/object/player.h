@@ -44,5 +44,5 @@ class Player
 
     PlayerBullet
         bullet_template; // 子弹对象模板,存放在玩家对象中,每次发射子弹时以它为基础创建子弹对象
-    std::list<PlayerBullet> bullets; // 玩家子弹
+    std::list<PlayerBullet> bullets; // 玩家子弹列表
 };
