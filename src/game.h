@@ -103,10 +103,10 @@ class Game
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
 
-    int fps = 160;                        // 游戏帧数
-    std::chrono::microseconds frame_time; // 游戏帧数对应帧时间
-    double current_fps;                   // 实时游戏帧数
+    int fps = 160;                       // 游戏帧数
+    std::chrono::nanoseconds frame_time; // 游戏帧数对应帧时间
+    double current_fps;                  // 实时游戏帧数
 
     std::chrono::steady_clock::time_point frame_start; // 帧起始时刻
-    std::chrono::microseconds delta_time;              // 实际每帧用时,控制飞机速度
+    std::chrono::nanoseconds delta_time;               // 实际每帧用时,控制飞机速度
 };

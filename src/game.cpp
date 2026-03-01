@@ -5,6 +5,7 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -38,6 +39,7 @@ void Game::run()
 
     uint32_t fps_count{0};
     auto fps_count_time_start = std::chrono::steady_clock::now();
+    auto next_frame_time_point = std::chrono::steady_clock::now();
     while (is_running)
     {
         frame_start = std::chrono::steady_clock::now();
@@ -51,20 +53,39 @@ void Game::run()
         fps_count++;
         auto frame_end = std::chrono::steady_clock::now();
 
-        // 控制帧率
-        auto elapsed =
-            std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);
-        if (elapsed < frame_time)
+        // 控制帧率: 先粗睡眠,后精细等待,减少SDL_Delay误差
+        next_frame_time_point += frame_time;
+        if (frame_end > next_frame_time_point)
         {
-            auto sleep_time =
-                std::chrono::duration_cast<std::chrono::milliseconds>(frame_time - elapsed);
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "sleep %d ms", sleep_time.count());
-            SDL_Delay(static_cast<uint32_t>(sleep_time.count()));
+            next_frame_time_point = frame_end;
+        }
+
+        while (true)
+        {
+            auto now = std::chrono::steady_clock::now();
+            auto remaining = next_frame_time_point - now;
+            if (remaining <= 0ns)
+            {
+                break;
+            }
+
+            if (remaining > 2ms)
+            {
+                auto sleep_ms =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(remaining - 1ms);
+                SDL_Delay(static_cast<uint32_t>(sleep_ms.count()));
+            }
+            else
+            {
+                std::this_thread::yield();
+            }
         }
 
         auto real_frame_end = std::chrono::steady_clock::now();
-        delta_time =
-            std::chrono::duration_cast<std::chrono::microseconds>(real_frame_end - frame_start);
+
+        // 计算每帧实际用时,控制对象移动速度
+        delta_time = real_frame_end - frame_start;
+
         // 记录每秒fps
         auto fps_count_elapsed = real_frame_end - fps_count_time_start;
         if (fps_count_elapsed >= 1s)
@@ -248,7 +269,7 @@ Game& Game::init()
     current_scene->init();
 
     // 计算游戏帧数对应帧时间
-    frame_time = std::chrono::duration_cast<std::chrono::microseconds>(1s) / fps;
+    frame_time = std::chrono::duration_cast<std::chrono::nanoseconds>(1s) / fps;
 
     return *this;
 }
