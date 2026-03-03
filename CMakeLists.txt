@@ -26,6 +26,7 @@ set(ENGINE_SOURCES
     src/object/player.cpp
     src/object/button_pause.cpp
     src/object/player_bullet.cpp
+    src/object/enemy.cpp
 )
 
 # 游戏库 游戏在这里实现

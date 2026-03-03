@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 #include <chrono>
 #include <memory>
+#include <random>
 
 class DeleteWindow // sdl_window删除器
 {
@@ -91,6 +92,12 @@ class Game
     // 设置日志种类级别
     void setLogCategoryPriority(SDL_LogCategory category, SDL_LogPriority priority);
 
+    // 获取随机数种子
+    std::random_device::result_type getRandomSeed() const;
+
+    // 获取0-1之间的随机浮点数
+    float getRandomFloat() const;
+
   private:
     Game();
     ~Game();
@@ -109,4 +116,6 @@ class Game
 
     std::chrono::steady_clock::time_point frame_start; // 帧起始时刻
     std::chrono::nanoseconds delta_time;               // 实际每帧用时,控制飞机速度
+
+    std::random_device::result_type random_seed{std::random_device{}()}; // 随机数种子
 };

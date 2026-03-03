@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -73,6 +74,8 @@ void SceneMain::update(double delta_time)
     }
     player.keyBoardControl(delta_time);
     player.updateBullets(delta_time);
+
+    updateEnemy(delta_time);
 }
 
 void SceneMain::render()
@@ -92,6 +95,7 @@ void SceneMain::render()
     player.renderBullets(Game::instance().getRenderer());
     player.render(Game::instance().getRenderer());
     pauseButton.render(Game::instance().getRenderer());
+    renderEnemy(Game::instance().getRenderer());
 
     if (is_paused)
     {
@@ -125,3 +129,41 @@ void SceneMain::render()
 }
 
 void SceneMain::clean() {}
+
+void SceneMain::generateEnemy()
+{
+    using namespace std::chrono_literals;
+    static auto last_generation_time = std::chrono::steady_clock::now();
+    static std::chrono::nanoseconds generation_cooldown{900ms}; // 生成敌人间隔
+    auto now = std::chrono::steady_clock::now();
+    if (now - last_generation_time >= generation_cooldown)
+    {
+        last_generation_time = now;
+        enemies.emplace_back(true, enemy_template);
+    }
+}
+
+void SceneMain::updateEnemy(double delta_time)
+{ // 生成敌人
+    generateEnemy();
+
+    // 更新敌人位置
+    for (auto& enemy : enemies)
+    {
+        enemy.update(delta_time);
+    }
+
+    // 移除已飞出屏幕的敌人
+    enemies.erase(
+        std::remove_if(enemies.begin(), enemies.end(), [](Enemy& enemy)
+                       { return enemy.getPosition().y > Game::instance().get_window_height(); }),
+        enemies.end());
+}
+
+void SceneMain::renderEnemy(SDL_Renderer* renderer)
+{
+    for (auto& enemy : enemies)
+    {
+        enemy.render(Game::instance().getRenderer());
+    }
+}

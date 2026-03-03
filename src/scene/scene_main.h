@@ -1,6 +1,10 @@
 #pragma once
 
+#include <random>
+#include <vector>
+
 #include "../object/button_pause.h"
+#include "../object/enemy.h"
 #include "../object/player.h"
 #include "./scene.h"
 
@@ -17,6 +21,9 @@ class SceneMain : public Scene
     void render() override;
     void clean() override;
 
+    void generateEnemy();                     // 生成敌人
+    void updateEnemy(double delta_time);      // 更新敌人位置
+    void renderEnemy(SDL_Renderer* renderer); // 渲染敌人
   private:
     Player player; // 玩家飞机
 
@@ -27,4 +34,10 @@ class SceneMain : public Scene
     SDL_Rect continue_text_rect{0, 0, 0, 0};
 
     void updatePauseTextLayout();
+
+    // 敌人生成模板
+    Enemy enemy_template;
+
+    // 敌人列表
+    std::vector<Enemy> enemies;
 };

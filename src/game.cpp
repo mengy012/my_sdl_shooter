@@ -211,6 +211,18 @@ void Game::setLogCategoryPriority(SDL_LogCategory category, SDL_LogPriority prio
     SDL_LogSetPriority(category, priority);
 }
 
+std::random_device::result_type Game::getRandomSeed() const
+{
+    return random_seed;
+}
+
+float Game::getRandomFloat() const
+{
+    static std::mt19937 rng(random_seed);
+    static std::uniform_real_distribution<float> dist(0.f, 1.f);
+    return dist(rng);
+}
+
 // 资源已使用智能指针管理,可能删除
 void Game::clean() {}
 
