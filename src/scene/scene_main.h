@@ -3,9 +3,9 @@
 #include <random>
 #include <vector>
 
-#include "../object/button_pause.h"
-#include "../object/enemy.h"
-#include "../object/player.h"
+#include "../scene_main_object/button_pause.h"
+#include "../scene_main_object/enemy.h"
+#include "../scene_main_object/player.h"
 #include "./scene.h"
 
 // 主场景

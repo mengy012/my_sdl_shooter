@@ -23,10 +23,10 @@ set(ENGINE_SOURCES
     src/game.cpp
     src/scene/scene.cpp
     src/scene/scene_main.cpp
-    src/object/player.cpp
-    src/object/button_pause.cpp
-    src/object/player_bullet.cpp
-    src/object/enemy.cpp
+    src/scene_main_object/player.cpp
+    src/scene_main_object/button_pause.cpp
+    src/scene_main_object/player_bullet.cpp
+    src/scene_main_object/enemy.cpp
 )
 
 # 游戏库 游戏在这里实现
