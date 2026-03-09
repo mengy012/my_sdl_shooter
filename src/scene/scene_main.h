@@ -31,7 +31,7 @@ class SceneMain : public Scene
 
     bool is_paused{false};
     SDL_Rect pause_text_rect{0, 0, 0, 0};
-    SDL_Rect continue_text_rect{0, 0, 0, 0};
+    SDL_Rect continue_button_rect{0, 0, 0, 0};
 
     void updatePauseTextLayout();
 

@@ -16,28 +16,31 @@ void SceneMain::init() {}
 void SceneMain::updatePauseTextLayout()
 {
     std::string_view pause_text("游戏已暂停");
-    std::unique_ptr<SDL_Texture, DeleteTexture> continue_picture;
-    continue_picture.reset(
+    std::unique_ptr<SDL_Texture, DeleteTexture> continue_button;
+    continue_button.reset(
         IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
-    if (!continue_picture)
+    if (!continue_button)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue picture: %s\n",
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue button: %s\n",
                      SDL_GetError());
         Game::instance().getIsRunning() = false;
     }
-    int pause_w = 0;
-    int pause_h = 0;
-    int continue_w = 0;
-    int continue_h = 0;
+    int pause_text_w = 0;
+    int pause_text_h = 0;
+    int continue_button_w = 0;
+    int continue_button_h = 0;
 
-    TTF_SizeUTF8(Game::instance().getFont(), pause_text.data(), &pause_w, &pause_h);
-    SDL_QueryTexture(continue_picture.get(), nullptr, nullptr, &continue_w, &continue_h);
+    TTF_SizeUTF8(Game::instance().getFont(), pause_text.data(), &pause_text_w, &pause_text_h);
+    SDL_QueryTexture(continue_button.get(), nullptr, nullptr, &continue_button_w,
+                     &continue_button_h);
 
     const int center_x = Game::instance().get_window_width() / 2;
     const int center_y = Game::instance().get_window_height() / 2;
 
-    pause_text_rect = {center_x - pause_w / 2, center_y - pause_h - 10, pause_w, pause_h};
-    continue_text_rect = {center_x - continue_w / 2, center_y + 10, continue_w, continue_h};
+    pause_text_rect = {center_x - pause_text_w / 2, center_y - pause_text_h - 10, pause_text_w,
+                       pause_text_h};
+    continue_button_rect = {center_x - continue_button_w / 2, center_y + 10, continue_button_w,
+                            continue_button_h};
 }
 
 void SceneMain::handleEvent(SDL_Event& event)
@@ -55,9 +58,10 @@ void SceneMain::handleEvent(SDL_Event& event)
         }
         else if (is_paused)
         {
-            const bool inside_continue =
-                (x >= continue_text_rect.x) && (x <= continue_text_rect.x + continue_text_rect.w) &&
-                (y >= continue_text_rect.y) && (y <= continue_text_rect.y + continue_text_rect.h);
+            bool inside_continue = (x >= continue_button_rect.x) &&
+                                   (x <= continue_button_rect.x + continue_button_rect.w) &&
+                                   (y >= continue_button_rect.y) &&
+                                   (y <= continue_button_rect.y + continue_button_rect.h);
             if (inside_continue)
             {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Continue clicked");
@@ -108,23 +112,23 @@ void SceneMain::render()
         SDL_RenderFillRect(renderer, &overlay);
 
         SDL_Color white{255, 255, 255, 255};
-        std::unique_ptr<SDL_Surface, DeleteSurface> pause_surface;
-        pause_surface.reset(
+        std::unique_ptr<SDL_Surface, DeleteSurface> pause_text_surface;
+        pause_text_surface.reset(
             TTF_RenderUTF8_Blended(Game::instance().getFont(), "游戏已暂停", white));
-        std::unique_ptr<SDL_Texture, DeleteTexture> pause_texture(
-            SDL_CreateTextureFromSurface(renderer, pause_surface.get()));
-        SDL_RenderCopy(renderer, pause_texture.get(), NULL, &pause_text_rect);
+        std::unique_ptr<SDL_Texture, DeleteTexture> pause_text_texture(
+            SDL_CreateTextureFromSurface(renderer, pause_text_surface.get()));
+        SDL_RenderCopy(renderer, pause_text_texture.get(), NULL, &pause_text_rect);
 
-        std::unique_ptr<SDL_Texture, DeleteTexture> continue_picture;
-        continue_picture.reset(
+        std::unique_ptr<SDL_Texture, DeleteTexture> continue_button;
+        continue_button.reset(
             IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
-        if (!continue_picture)
+        if (!continue_button)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue picture: %s\n",
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue button: %s\n",
                          SDL_GetError());
             Game::instance().getIsRunning() = false;
         }
-        SDL_RenderCopy(renderer, continue_picture.get(), NULL, &continue_text_rect);
+        SDL_RenderCopy(renderer, continue_button.get(), NULL, &continue_button_rect);
     }
 }
 
@@ -164,6 +168,6 @@ void SceneMain::renderEnemy(SDL_Renderer* renderer)
 {
     for (auto& enemy : enemies)
     {
-        enemy.render(Game::instance().getRenderer());
+        enemy.render(renderer);
     }
 }
