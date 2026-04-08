@@ -21,6 +21,9 @@ Player::Player()
 
     position.x = Game::instance().get_window_width() / 2.f - width / 2.f;
     position.y = Game::instance().get_window_height() - static_cast<float>(height);
+
+    // 初始化上次射击时间
+    last_shoot_time = std::chrono::steady_clock::now();
 }
 
 Player::~Player() {}

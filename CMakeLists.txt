@@ -27,6 +27,7 @@ set(ENGINE_SOURCES
     src/scene_main_object/button_pause.cpp
     src/scene_main_object/player_bullet.cpp
     src/scene_main_object/enemy.cpp
+    src/scene_main_object/enemy_bullet.cpp
 )
 
 # 游戏库 游戏在这里实现

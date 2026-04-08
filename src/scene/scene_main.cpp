@@ -1,5 +1,6 @@
 #include "scene_main.h"
 #include "../game.h"
+#include "../scene_main_object/enemy_bullet.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -9,7 +10,10 @@
 
 SceneMain::SceneMain() {}
 
-SceneMain::~SceneMain() {}
+SceneMain::~SceneMain()
+{
+    EnemyBullet::shared_texture.reset();
+}
 
 void SceneMain::init() {}
 
@@ -80,6 +84,7 @@ void SceneMain::update(double delta_time)
     player.updateBullets(delta_time);
 
     updateEnemy(delta_time);
+    updateEnemyBullets(delta_time);
 }
 
 void SceneMain::render()
@@ -99,6 +104,7 @@ void SceneMain::render()
     player.renderBullets(Game::instance().getRenderer());
     player.render(Game::instance().getRenderer());
     pauseButton.render(Game::instance().getRenderer());
+    renderEnemyBullets(Game::instance().getRenderer());
     renderEnemy(Game::instance().getRenderer());
 
     if (is_paused)
@@ -169,5 +175,54 @@ void SceneMain::renderEnemy(SDL_Renderer* renderer)
     for (auto& enemy : enemies)
     {
         enemy.render(renderer);
+    }
+}
+
+void SceneMain::updateEnemyBullets(double delta_time)
+{
+    // 发射子弹
+    for (auto& enemy : enemies)
+    {
+        auto now = std::chrono::steady_clock::now();
+        if (now - enemy.getLastShootTime() >= enemy.getShootCooldown())
+        {
+            enemy.getLastShootTime() = now;
+            enemy_bullets.emplace_back(enemy.getPosition().x + enemy.getWidth() / 2,
+                                       enemy.getPosition().y + enemy.getHeight() / 2,
+                                       enemy_bullet_template);
+            enemy_bullets.back().setDirection(player.getPosition(), player.getWidth(),
+                                              player.getHeight());
+        }
+    }
+
+    // 更新子弹位置（在循环外，每帧只更新一次）
+    for (auto& bullet : enemy_bullets)
+    {
+        bullet.update(delta_time);
+    }
+
+    // 移除已飞出屏幕的子弹
+    enemy_bullets.remove_if(
+        [](EnemyBullet& bullet)
+        {
+            auto& game = Game::instance();
+            float bullet_x = bullet.getPosition().x;
+            float bullet_y = bullet.getPosition().y;
+            int bullet_width = bullet.getWidth();
+            int bullet_height = bullet.getHeight();
+
+            return bullet_y > game.get_window_height() ||
+                   bullet_y < -static_cast<float>(bullet_height) ||
+                   bullet_x > game.get_window_width() ||
+                   bullet_x < -static_cast<float>(bullet_width);
+        });
+}
+
+void SceneMain::renderEnemyBullets(SDL_Renderer* renderer)
+{
+    // 渲染子弹
+    for (auto& bullet : enemy_bullets)
+    {
+        bullet.render(renderer);
     }
 }
