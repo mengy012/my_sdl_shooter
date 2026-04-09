@@ -81,6 +81,16 @@ int EnemyBullet::getHeight() const
     return height;
 }
 
+int EnemyBullet::getDamage() const
+{
+    return damage;
+}
+
+bool& EnemyBullet::getIsDestroyed()
+{
+    return is_destroyed;
+}
+
 void EnemyBullet::setDirection(SDL_FPoint player_position, int player_width, int player_height)
 {
     direction = {(player_position.x + player_width / 2.f) - (position.x + width / 2.f),

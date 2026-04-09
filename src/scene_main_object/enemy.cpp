@@ -61,6 +61,16 @@ int Enemy::getHeight()
     return height;
 }
 
+int& Enemy::getHealth()
+{
+    return health;
+}
+
+bool& Enemy::getIsDestroyed()
+{
+    return is_destroyed;
+}
+
 void Enemy::render(SDL_Renderer* renderer)
 {
     SDL_Rect dstRect = {static_cast<int>(position.x), static_cast<int>(position.y), width, height};

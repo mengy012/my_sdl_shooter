@@ -28,6 +28,8 @@ class SceneMain : public Scene
 
     void updateEnemyBullets(double delta_time);      // 更新敌人子弹位置
     void renderEnemyBullets(SDL_Renderer* renderer); // 渲染敌人子弹
+
+    void enemyExplode(Enemy& enemy); // 敌人爆炸
   private:
     Player player; // 玩家飞机
 

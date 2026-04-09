@@ -20,6 +20,9 @@ class Enemy
     SDL_FPoint& getPosition();
     int getWidth();
     int getHeight();
+    int& getHealth();
+    bool& getIsDestroyed();
+
     // 获取上次射击时间,可以修改为当前时间
     std::chrono::steady_clock::time_point& getLastShootTime()
     {
@@ -39,8 +42,11 @@ class Enemy
     SDL_FPoint position{0, 0};
     int width{0};
     int height{0};
-    float speed{200.f}; // 敌机速度（像素 / s）
+    float speed{150.f}; // 敌机速度（像素 / s）
 
     std::chrono::steady_clock::time_point last_shoot_time;                    // 上次射击时间
-    std::chrono::nanoseconds shoot_cooldown{std::chrono::milliseconds(1000)}; // 射击冷却时间
+    std::chrono::nanoseconds shoot_cooldown{std::chrono::milliseconds(3000)}; // 射击冷却时间
+
+    int health{2};            // 敌机生命值
+    bool is_destroyed{false}; // 敌机是否被销毁
 };

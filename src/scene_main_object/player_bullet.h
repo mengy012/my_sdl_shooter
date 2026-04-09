@@ -17,6 +17,8 @@ class PlayerBullet
     SDL_FPoint& getPosition();
     int getWidth() const;
     int getHeight() const;
+    int getDamage() const;
+    bool& getIsDestroyed();
 
     void render(SDL_Renderer* renderer);
     void update(double delta_time); // 更新子弹位置
@@ -28,4 +30,7 @@ class PlayerBullet
     float speed{500.f};  // 子弹速度（像素 / s）
 
     std::shared_ptr<SDL_Texture> texture; // 子弹纹理
+
+    int damage{1};            // 子弹伤害
+    bool is_destroyed{false}; // 是否销毁,子弹击中敌人时设置为true
 };

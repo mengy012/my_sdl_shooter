@@ -56,6 +56,16 @@ int PlayerBullet::getHeight() const
     return height;
 }
 
+int PlayerBullet::getDamage() const
+{
+    return damage;
+}
+
+bool& PlayerBullet::getIsDestroyed()
+{
+    return is_destroyed;
+}
+
 void PlayerBullet::render(SDL_Renderer* renderer)
 {
     SDL_Rect bullet_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};

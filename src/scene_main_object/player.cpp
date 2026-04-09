@@ -48,6 +48,16 @@ int Player::getHeight()
     return height;
 }
 
+int& Player::getHealth()
+{
+    return health;
+}
+
+bool& Player::getIsLive()
+{
+    return is_live;
+}
+
 void Player::render(SDL_Renderer* renderer)
 {
 
@@ -58,6 +68,7 @@ void Player::render(SDL_Renderer* renderer)
 
 void Player::keyBoardControl(double delta_time)
 {
+
     auto keyboard_state = SDL_GetKeyboardState(NULL);
 
     float cur_accel = accel;
@@ -117,6 +128,48 @@ void Player::keyBoardControl(double delta_time)
     }
 }
 
+void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets)
+{
+    SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
+
+    for (auto& bullet : enemy_bullets)
+    {
+        SDL_Rect bullet_rect{
+            static_cast<int>(bullet.getPosition().x),
+            static_cast<int>(bullet.getPosition().y),
+            bullet.getWidth(),
+            bullet.getHeight(),
+        };
+        if (SDL_HasIntersection(&player_rect, &bullet_rect))
+        {
+            health -= bullet.getDamage();
+            bullet.getIsDestroyed() = true;
+        }
+    }
+    enemy_bullets.remove_if([](EnemyBullet& b) { return b.getIsDestroyed(); }); // 移除已销毁的子弹
+
+    for (auto& enemy : enemies)
+    {
+        SDL_Rect enemy_rect{static_cast<int>(enemy.getPosition().x),
+                            static_cast<int>(enemy.getPosition().y), enemy.getWidth(),
+                            enemy.getHeight()};
+        if (SDL_HasIntersection(&player_rect, &enemy_rect))
+        {
+            health -= 1;
+            enemy.getIsDestroyed() = true;
+        }
+    }
+    // 移除已销毁的敌人
+    enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+                                 [](Enemy& enemy) { return enemy.getIsDestroyed(); }),
+                  enemies.end());
+
+    if (health <= 0)
+    {
+        is_live = false;
+    }
+}
+
 void Player::shoot()
 {
     // 以玩家飞机位置为基础创建子弹对象
@@ -126,13 +179,38 @@ void Player::shoot()
     bullets.emplace_back(bullet_x, bullet_y, bullet_template);
 }
 
-void Player::updateBullets(double delta_time)
+void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies)
 {
     for (auto& bullet : bullets)
     {
         bullet.update(delta_time);
     }
 
+    // 检查子弹是否击中敌机
+    for (auto bullet = bullets.begin(); bullet != bullets.end();)
+    {
+        SDL_Rect bullet_rect{static_cast<int>(bullet->getPosition().x),
+                             static_cast<int>(bullet->getPosition().y), bullet->getWidth(),
+                             bullet->getHeight()};
+        for (auto enemy = enemies.begin(); enemy != enemies.end();)
+        {
+            SDL_Rect enemy_rect{static_cast<int>(enemy->getPosition().x),
+                                static_cast<int>(enemy->getPosition().y), enemy->getWidth(),
+                                enemy->getHeight()};
+            if (SDL_HasIntersection(&enemy_rect, &bullet_rect))
+            {
+                enemy->getHealth() -= bullet->getDamage();
+                bullet->getIsDestroyed() = true;
+                break;
+            }
+            ++enemy;
+        }
+        ++bullet;
+    }
+    // 移除已销毁的子弹
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
+                                 [](PlayerBullet& b) { return b.getIsDestroyed(); }),
+                  bullets.end());
     // 移除飞出屏幕的子弹
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](PlayerBullet& b)
                                  { return b.getPosition().y + b.getHeight() < 0; }),

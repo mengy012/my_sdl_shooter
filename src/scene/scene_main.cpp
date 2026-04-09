@@ -73,12 +73,13 @@ void SceneMain::handleEvent(SDL_Event& event)
 }
 void SceneMain::update(double delta_time)
 {
-    if (is_paused)
+    if (is_paused || !player.getIsLive())
     {
         return;
     }
     player.keyBoardControl(delta_time);
-    player.updateBullets(delta_time);
+    player.updateBullets(delta_time, enemies);
+    player.update(enemies, enemy_bullets);
 
     updateEnemy(delta_time);
     updateEnemyBullets(delta_time);
@@ -98,11 +99,15 @@ void SceneMain::render()
     // SDL_RenderCopy(Game::instance().getRenderer(), background_texture.get(), NULL, &bg_rect);
     // SDL_SetTextureColorMod(player.texture.get(), 100, 100, 100);
 
-    player.renderBullets(Game::instance().getRenderer());
-    player.render(Game::instance().getRenderer());
+    if (player.getIsLive()) // 玩家存活,渲染玩家和敌人
+    {
+        player.renderBullets(Game::instance().getRenderer());
+        player.render(Game::instance().getRenderer());
+        renderEnemyBullets(Game::instance().getRenderer());
+        renderEnemy(Game::instance().getRenderer());
+    }
+
     pauseButton.render(Game::instance().getRenderer());
-    renderEnemyBullets(Game::instance().getRenderer());
-    renderEnemy(Game::instance().getRenderer());
 
     if (is_paused)
     {
@@ -151,15 +156,36 @@ void SceneMain::generateEnemy()
 }
 
 void SceneMain::updateEnemy(double delta_time)
-{ // 生成敌人
+{
+    // 生成敌人
     generateEnemy();
-
     // 更新敌人位置
     for (auto& enemy : enemies)
     {
         enemy.update(delta_time);
     }
 
+    // 找出血量<=0的敌人，并标记为已销毁
+    for (auto& enemy : enemies)
+    {
+        if (enemy.getHealth() <= 0)
+        {
+            enemy.getIsDestroyed() = true;
+        }
+    }
+    // 移除已销毁的敌人
+    for (auto enemy = enemies.begin(); enemy != enemies.end();)
+    {
+        if (enemy->getIsDestroyed())
+        {
+            enemyExplode(*enemy);
+            enemy = enemies.erase(enemy);
+        }
+        else
+        {
+            enemy = std::next(enemy);
+        }
+    }
     // 移除已飞出屏幕的敌人
     enemies.erase(
         std::remove_if(enemies.begin(), enemies.end(), [](Enemy& enemy)
@@ -223,3 +249,5 @@ void SceneMain::renderEnemyBullets(SDL_Renderer* renderer)
         bullet.render(renderer);
     }
 }
+
+void SceneMain::enemyExplode(Enemy& enemy) {}
