@@ -10,10 +10,7 @@
 
 SceneMain::SceneMain() {}
 
-SceneMain::~SceneMain()
-{
-    EnemyBullet::shared_texture.reset();
-}
+SceneMain::~SceneMain() {}
 
 void SceneMain::init() {}
 

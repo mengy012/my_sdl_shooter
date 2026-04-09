@@ -22,8 +22,7 @@ class EnemyBullet
     void render(SDL_Renderer* renderer);
     void update(double delta_time); // 更新子弹位置
 
-    static std::shared_ptr<SDL_Texture> shared_texture; // 共享子弹纹理
-  private:
+    private:
     SDL_FPoint position;  // 子弹位置
     int width{0};         // 子弹宽度
     int height{0};        // 子弹高度

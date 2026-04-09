@@ -46,7 +46,6 @@ class SceneMain : public Scene
     std::vector<Enemy> enemies;
 
     // 敌机发射子弹相关
-
     EnemyBullet
         enemy_bullet_template; // 子弹对象模板,存放在敌机对象中,每次发射子弹时以它为基础创建子弹对象
     std::list<EnemyBullet> enemy_bullets; // 敌机子弹列表

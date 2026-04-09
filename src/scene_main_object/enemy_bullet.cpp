@@ -1,9 +1,6 @@
 #include "enemy_bullet.h"
 #include <SDL_image.h>
 
-// 静态成员定义并初始化
-std::shared_ptr<SDL_Texture> EnemyBullet::shared_texture = nullptr;
-
 // 归一化方向向量
 SDL_FPoint SDL_FPointNormalize(SDL_FPoint vec)
 {
@@ -33,9 +30,9 @@ EnemyBullet::EnemyBullet()
     position.y = 0.f;
 
     // 仅在首次调用时加载纹理
-    if (!shared_texture)
+    if (!texture)
     {
-        shared_texture = std::shared_ptr<SDL_Texture>(
+        texture = std::shared_ptr<SDL_Texture>(
             IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/laser-1.png"),
             [](SDL_Texture* tex)
             {
@@ -46,14 +43,14 @@ EnemyBullet::EnemyBullet()
                 }
             });
 
-        if (!shared_texture)
+        if (!texture)
         {
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "load bullet img failed %s\n", IMG_GetError());
             Game::instance().getIsRunning() = false;
         }
         else
         {
-            SDL_QueryTexture(shared_texture.get(), NULL, NULL, &width, &height);
+            SDL_QueryTexture(texture.get(), NULL, NULL, &width, &height);
             width /= 4;
             height /= 4;
         }
@@ -61,12 +58,10 @@ EnemyBullet::EnemyBullet()
     else
     {
         // 纹理已加载，直接复用宽高
-        SDL_QueryTexture(shared_texture.get(), NULL, NULL, &width, &height);
+        SDL_QueryTexture(texture.get(), NULL, NULL, &width, &height);
         width /= 4;
         height /= 4;
     }
-
-    texture = shared_texture;
 }
 
 EnemyBullet::~EnemyBullet() {}
