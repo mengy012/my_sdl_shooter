@@ -156,13 +156,9 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
         if (SDL_HasIntersection(&player_rect, &enemy_rect))
         {
             health -= 1;
-            enemy.getIsDestroyed() = true;
+            enemy.getHealth() = 0; // 设置生命值为0，让updateEnemy()统一处理爆炸和删除
         }
     }
-    // 移除已销毁的敌人
-    enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-                                 [](Enemy& enemy) { return enemy.getIsDestroyed(); }),
-                  enemies.end());
 
     if (health <= 0)
     {

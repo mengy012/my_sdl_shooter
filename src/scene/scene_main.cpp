@@ -10,7 +10,10 @@
 
 SceneMain::SceneMain() {}
 
-SceneMain::~SceneMain() {}
+SceneMain::~SceneMain()
+{
+    Explosion::GetTexture(true);
+}
 
 void SceneMain::init() {}
 
