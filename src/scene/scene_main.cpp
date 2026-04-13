@@ -73,16 +73,24 @@ void SceneMain::handleEvent(SDL_Event& event)
 }
 void SceneMain::update(double delta_time)
 {
-    if (is_paused || !player.getIsLive())
+    if (is_paused)
     {
         return;
     }
-    player.keyBoardControl(delta_time);
-    player.updateBullets(delta_time, enemies);
-    player.update(enemies, enemy_bullets);
+    if (!player.getIsLive())
+    {
+        playerExplode();
+    }
+    else
+    {
+        player.keyBoardControl(delta_time);
+        player.updateBullets(delta_time, enemies);
+        player.update(enemies, enemy_bullets);
 
-    updateEnemy(delta_time);
-    updateEnemyBullets(delta_time);
+        updateEnemy(delta_time);
+        updateEnemyBullets(delta_time);
+    }
+    updateExplosions(delta_time);
 }
 
 void SceneMain::render()
@@ -106,6 +114,8 @@ void SceneMain::render()
         renderEnemyBullets(Game::instance().getRenderer());
         renderEnemy(Game::instance().getRenderer());
     }
+
+    renderExplosions(Game::instance().getRenderer());
 
     pauseButton.render(Game::instance().getRenderer());
 
@@ -250,4 +260,37 @@ void SceneMain::renderEnemyBullets(SDL_Renderer* renderer)
     }
 }
 
-void SceneMain::enemyExplode(Enemy& enemy) {}
+void SceneMain::enemyExplode(Enemy& enemy)
+{
+    explosions.emplace_back(enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(),
+                            enemy.getHeight(), std::chrono::steady_clock::now());
+}
+
+void SceneMain::playerExplode()
+{
+    static bool exploded = false; // 玩家是否爆炸过
+    if (!exploded)
+    {
+        explosions.emplace_back(player.getPosition().x, player.getPosition().y, player.getWidth(),
+                                player.getHeight(), std::chrono::steady_clock::now());
+        exploded = true;
+    }
+}
+
+void SceneMain::updateExplosions(double delta_time)
+{
+    for (auto& explosion : explosions)
+    {
+        explosion.update(delta_time);
+    }
+    // 移除已完成的爆炸效果
+    explosions.remove_if([](Explosion& explosion) { return explosion.getIsFinished(); });
+}
+
+void SceneMain::renderExplosions(SDL_Renderer* renderer)
+{
+    for (auto& explosion : explosions)
+    {
+        explosion.render(renderer);
+    }
+}

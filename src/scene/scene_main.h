@@ -6,7 +6,9 @@
 #include "../scene_main_object/button_pause.h"
 #include "../scene_main_object/enemy.h"
 #include "../scene_main_object/enemy_bullet.h"
+#include "../scene_main_object/explosion.h"
 #include "../scene_main_object/player.h"
+
 #include "./scene.h"
 
 // 主场景
@@ -29,7 +31,10 @@ class SceneMain : public Scene
     void updateEnemyBullets(double delta_time);      // 更新敌人子弹位置
     void renderEnemyBullets(SDL_Renderer* renderer); // 渲染敌人子弹
 
-    void enemyExplode(Enemy& enemy); // 敌人爆炸
+    void enemyExplode(Enemy& enemy);               // 敌人爆炸
+    void playerExplode();                          // 玩家爆炸
+    void updateExplosions(double delta_time);      // 更新爆炸效果
+    void renderExplosions(SDL_Renderer* renderer); // 渲染爆炸效果
   private:
     Player player; // 玩家飞机
 
@@ -51,4 +56,7 @@ class SceneMain : public Scene
     EnemyBullet
         enemy_bullet_template; // 子弹对象模板,存放在敌机对象中,每次发射子弹时以它为基础创建子弹对象
     std::list<EnemyBullet> enemy_bullets; // 敌机子弹列表
+
+    // 爆炸效果列表（包括玩家和敌人爆炸）
+    std::list<Explosion> explosions;
 };
