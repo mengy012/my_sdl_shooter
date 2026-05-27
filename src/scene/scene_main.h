@@ -7,6 +7,7 @@
 #include "../scene_main_object/enemy.h"
 #include "../scene_main_object/enemy_bullet.h"
 #include "../scene_main_object/explosion.h"
+#include "../scene_main_object/item.h"
 #include "../scene_main_object/player.h"
 
 #include "./scene.h"
@@ -35,6 +36,10 @@ class SceneMain : public Scene
     void playerExplode();                          // 玩家爆炸
     void updateExplosions(double delta_time);      // 更新爆炸效果
     void renderExplosions(SDL_Renderer* renderer); // 渲染爆炸效果
+
+    void generateItem(Enemy& enemy);          // 生成物品
+    void updateItems(double delta_time);      // 更新物品位置
+    void renderItems(SDL_Renderer* renderer); // 渲染物品
   private:
     Player player; // 玩家飞机
 
@@ -59,4 +64,10 @@ class SceneMain : public Scene
 
     // 爆炸效果列表（包括玩家和敌人爆炸）
     std::list<Explosion> explosions;
+
+    // 物品纹理管理器
+    ItemTextureManager item_texture_manager;
+
+    // 物品列表
+    std::list<std::unique_ptr<Item>> items;
 };

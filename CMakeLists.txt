@@ -32,7 +32,11 @@ set(ENGINE_SOURCES
 )
 
 # 游戏库 游戏在这里实现
-add_library(engine STATIC ${ENGINE_SOURCES})
+add_library(engine STATIC ${ENGINE_SOURCES}
+    src/scene_main_object/item.h
+    src/scene_main_object/item_life_restoring.h
+    src/scene_main_object/item_life_restoring.cpp
+    )
 target_include_directories(engine PUBLIC src)
 target_link_libraries(engine
     PUBLIC

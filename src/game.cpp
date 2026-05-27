@@ -216,7 +216,7 @@ std::random_device::result_type Game::getRandomSeed() const
     return random_seed;
 }
 
-float Game::getRandomFloat() const
+float Game::getRandomFloat() const noexcept
 {
     static std::mt19937 rng(random_seed);
     static std::uniform_real_distribution<float> dist(0.f, 1.f);

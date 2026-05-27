@@ -1,6 +1,7 @@
 #include "scene_main.h"
 #include "../game.h"
 #include "../scene_main_object/enemy_bullet.h"
+#include "../scene_main_object/item_life_restoring.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -88,10 +89,11 @@ void SceneMain::update(double delta_time)
     {
         player.keyBoardControl(delta_time);
         player.updateBullets(delta_time, enemies);
-        player.update(enemies, enemy_bullets);
+        player.update(enemies, enemy_bullets, items);
 
         updateEnemy(delta_time);
         updateEnemyBullets(delta_time);
+        updateItems(delta_time);
     }
     updateExplosions(delta_time);
 }
@@ -116,6 +118,7 @@ void SceneMain::render()
         player.render(Game::instance().getRenderer());
         renderEnemyBullets(Game::instance().getRenderer());
         renderEnemy(Game::instance().getRenderer());
+        renderItems(Game::instance().getRenderer());
     }
 
     renderExplosions(Game::instance().getRenderer());
@@ -192,6 +195,13 @@ void SceneMain::updateEnemy(double delta_time)
         if (enemy->getIsDestroyed())
         {
             enemyExplode(*enemy);
+            {
+                if (Game::instance().getRandomFloat() > 0.4f)
+                {
+                    // 生成物品
+                    generateItem(*enemy);
+                }
+            }
             enemy = enemies.erase(enemy);
         }
         else
@@ -295,5 +305,42 @@ void SceneMain::renderExplosions(SDL_Renderer* renderer)
     for (auto& explosion : explosions)
     {
         explosion.render(renderer);
+    }
+}
+
+void SceneMain::generateItem(Enemy& enemy)
+{
+    // 目前只生成生命
+    ItemType item_type = ItemType::Life;
+
+    switch (item_type)
+    {
+    case ItemType::Life:
+        items.emplace_back(
+            std::make_unique<ItemLifeRestoring>(enemy.getPosition().x, enemy.getPosition().y,
+                                                item_texture_manager.getTexture(item_type)));
+        break;
+    case ItemType::Shield:
+        break;
+    case ItemType::Time:
+        break;
+    }
+}
+
+void SceneMain::updateItems(double delta_time)
+{
+    for (auto& item : items)
+    {
+        item->update(delta_time);
+    }
+    // 移除已销毁的物品
+    items.remove_if([](std::unique_ptr<Item>& item) { return item->getIsDestroyed(); });
+}
+
+void SceneMain::renderItems(SDL_Renderer* renderer)
+{
+    for (auto& item : items)
+    {
+        item->render(renderer);
     }
 }

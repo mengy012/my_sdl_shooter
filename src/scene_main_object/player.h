@@ -2,6 +2,7 @@
 
 #include "../game.h"
 #include "enemy.h"
+#include "item.h"
 #include "player_bullet.h"
 
 #include <SDL.h>
@@ -30,7 +31,8 @@ class Player
 
     void render(SDL_Renderer* renderer);
     void keyBoardControl(double delta_time); // 使用键盘控制玩家移动
-    void update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& bullets); // 更新玩家状态
+    void update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& bullets,
+                std::list<std::unique_ptr<Item>>& items); // 更新玩家状态
 
     void shoot();                                                       // 射击子弹
     void updateBullets(double delta_time, std::vector<Enemy>& enemies); // 更新子弹位置

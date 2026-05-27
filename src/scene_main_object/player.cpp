@@ -128,7 +128,8 @@ void Player::keyBoardControl(double delta_time)
     }
 }
 
-void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets)
+void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets,
+                    std::list<std::unique_ptr<Item>>& items)
 {
     SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
 
@@ -157,6 +158,30 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
         {
             health -= 1;
             enemy.getHealth() = 0; // 设置生命值为0，让updateEnemy()统一处理爆炸和删除
+        }
+    }
+
+    for (auto& item : items)
+    {
+
+        SDL_Rect item_rect{static_cast<int>(item->getPosition().x),
+                           static_cast<int>(item->getPosition().y), item->getWidth(),
+                           item->getHeight()};
+        if (SDL_HasIntersection(&player_rect, &item_rect))
+        {
+            switch (item->getType())
+            {
+            case ItemType::Life:
+                health += 1;
+                item->getIsDestroyed() = true; // 让updateItems()移除已销毁的物品
+                break;
+            case ItemType::Shield:
+                item->getIsDestroyed() = true;
+                break;
+            case ItemType::Time:
+                item->getIsDestroyed() = true;
+                break;
+            }
         }
     }
 

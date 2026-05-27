@@ -96,7 +96,7 @@ class Game
     std::random_device::result_type getRandomSeed() const;
 
     // 获取0-1之间的随机浮点数
-    float getRandomFloat() const;
+    float getRandomFloat() const noexcept;
 
   private:
     Game();
