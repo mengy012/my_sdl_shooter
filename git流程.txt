@@ -11,3 +11,46 @@ refactor: 重构
 docs:文档
 cleanup: 删除无用代码
 style:代码格式
+
+git commit：提交“状态快照”（高频、细粒度）
+本质：记录一次仓库状态（snapshot）
+频率：高频
+粒度：可以很小（甚至一行改动）
+
+👉 常见实践：
+
+git add .
+git commit -m "fix: 修复玩家血量计算 bug"
+
+✔ 推荐习惯：
+
+每完成一个“逻辑闭环”就 commit
+（比如：一个函数、一个 bug 修复、一小块功能）
+commit 要可回滚、可理解
+
+👉 核心作用：
+
+构建开发历史（history DAG）
+支持回滚 / bisect / blame
+提供最小可追踪单元
+2️⃣ git tag：标记“重要版本点”（低频、粗粒度）
+本质：给某个 commit 打标签（不可变引用）
+频率：低频
+粒度：通常是里程碑级
+
+👉 常见用法：
+
+git tag v1.0
+git tag -a v1.0 -m "第一个正式版本"
+
+✔ 常见打 tag 的时机：
+
+一个功能完整完成
+一个版本准备发布（release）
+一个稳定点（可部署）
+
+👉 核心作用：
+
+标记版本（versioning）
+发布软件（release anchor）
+CI/CD / 发布系统依赖它
