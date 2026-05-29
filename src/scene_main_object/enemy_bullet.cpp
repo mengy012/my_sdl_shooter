@@ -32,16 +32,15 @@ EnemyBullet::EnemyBullet()
     // 仅在首次调用时加载纹理
     if (!texture)
     {
-        texture = std::shared_ptr<SDL_Texture>(
-            IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/laser-1.png"),
-            [](SDL_Texture* tex)
-            {
-                if (tex)
-                {
-                    SDL_DestroyTexture(tex);
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "enemyBullet texture destroyed\n");
-                }
-            });
+        texture = std::shared_ptr<SDL_Texture>(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/laser-1.png"),
+                                               [](SDL_Texture* tex)
+                                               {
+                                                   if (tex)
+                                                   {
+                                                       SDL_DestroyTexture(tex);
+                                                       SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "enemyBullet texture destroyed\n");
+                                                   }
+                                               });
 
         if (!texture)
         {
@@ -93,8 +92,7 @@ bool& EnemyBullet::getIsDestroyed()
 
 void EnemyBullet::setDirection(SDL_FPoint player_position, int player_width, int player_height)
 {
-    direction = {(player_position.x + player_width / 2.f) - (position.x + width / 2.f),
-                 (player_position.y + player_height / 2.f) - (position.y + height / 2.f)};
+    direction = {(player_position.x + player_width / 2.f) - (position.x + width / 2.f), (player_position.y + player_height / 2.f) - (position.y + height / 2.f)};
     direction = SDL_FPointNormalize(direction); // 归一化方向向量
 
     // 处理零向量情况，确保子弹有一个默认方向

@@ -60,18 +60,15 @@ class ItemTextureManager
         switch (type)
         {
         case ItemType::Life:
-            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(),
-                                              "../../assets/image/bonus_life.png");
+            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bonus_life.png");
             return textures_[type];
             break;
         case ItemType::Shield:
-            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(),
-                                              "../../assets/image/bonus_shield.png");
+            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bonus_shield.png");
             return textures_[type];
             break;
         case ItemType::Time:
-            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(),
-                                              "../../assets/image/bonus_time.png");
+            textures_[type] = IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bonus_time.png");
             return textures_[type];
             break;
         }

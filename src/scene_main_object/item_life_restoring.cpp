@@ -53,8 +53,7 @@ void ItemLifeRestoring::render(SDL_Renderer* renderer)
 {
     if (texture_)
     {
-        SDL_Rect dest_rect{static_cast<int>(position.x), static_cast<int>(position.y), width,
-                           height};
+        SDL_Rect dest_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
         SDL_RenderCopy(renderer, texture_, NULL, &dest_rect);
     }
 }

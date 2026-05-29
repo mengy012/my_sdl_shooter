@@ -7,8 +7,7 @@
 
 Player::Player()
 {
-    texture.reset(
-        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/SpaceShip.png"));
+    texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/SpaceShip.png"));
     if (!texture)
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "load spaceship img failed %s\n", IMG_GetError());
@@ -111,10 +110,8 @@ void Player::keyBoardControl(double delta_time)
     position.x += velocity.x * delta_time;
     position.y += velocity.y * delta_time;
     // 6. 边界控制
-    position.x = std::clamp(position.x, 0.f,
-                            static_cast<float>(Game::instance().get_window_width()) - width);
-    position.y = std::clamp(position.y, 0.f,
-                            static_cast<float>(Game::instance().get_window_height()) - height);
+    position.x = std::clamp(position.x, 0.f, static_cast<float>(Game::instance().get_window_width()) - width);
+    position.y = std::clamp(position.y, 0.f, static_cast<float>(Game::instance().get_window_height()) - height);
 
     // 控制子弹发射
     if (keyboard_state[SDL_SCANCODE_J])
@@ -128,8 +125,7 @@ void Player::keyBoardControl(double delta_time)
     }
 }
 
-void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets,
-                    std::list<std::unique_ptr<Item>>& items)
+void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets, std::list<std::unique_ptr<Item>>& items)
 {
     SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
 
@@ -151,9 +147,7 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
 
     for (auto& enemy : enemies)
     {
-        SDL_Rect enemy_rect{static_cast<int>(enemy.getPosition().x),
-                            static_cast<int>(enemy.getPosition().y), enemy.getWidth(),
-                            enemy.getHeight()};
+        SDL_Rect enemy_rect{static_cast<int>(enemy.getPosition().x), static_cast<int>(enemy.getPosition().y), enemy.getWidth(), enemy.getHeight()};
         if (SDL_HasIntersection(&player_rect, &enemy_rect))
         {
             health -= 1;
@@ -164,9 +158,7 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
     for (auto& item : items)
     {
 
-        SDL_Rect item_rect{static_cast<int>(item->getPosition().x),
-                           static_cast<int>(item->getPosition().y), item->getWidth(),
-                           item->getHeight()};
+        SDL_Rect item_rect{static_cast<int>(item->getPosition().x), static_cast<int>(item->getPosition().y), item->getWidth(), item->getHeight()};
         if (SDL_HasIntersection(&player_rect, &item_rect))
         {
             switch (item->getType())
@@ -210,14 +202,10 @@ void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies)
     // 检查子弹是否击中敌机
     for (auto bullet = bullets.begin(); bullet != bullets.end();)
     {
-        SDL_Rect bullet_rect{static_cast<int>(bullet->getPosition().x),
-                             static_cast<int>(bullet->getPosition().y), bullet->getWidth(),
-                             bullet->getHeight()};
+        SDL_Rect bullet_rect{static_cast<int>(bullet->getPosition().x), static_cast<int>(bullet->getPosition().y), bullet->getWidth(), bullet->getHeight()};
         for (auto enemy = enemies.begin(); enemy != enemies.end();)
         {
-            SDL_Rect enemy_rect{static_cast<int>(enemy->getPosition().x),
-                                static_cast<int>(enemy->getPosition().y), enemy->getWidth(),
-                                enemy->getHeight()};
+            SDL_Rect enemy_rect{static_cast<int>(enemy->getPosition().x), static_cast<int>(enemy->getPosition().y), enemy->getWidth(), enemy->getHeight()};
             if (SDL_HasIntersection(&enemy_rect, &bullet_rect))
             {
                 enemy->getHealth() -= bullet->getDamage();
@@ -229,13 +217,9 @@ void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies)
         ++bullet;
     }
     // 移除已销毁的子弹
-    bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-                                 [](PlayerBullet& b) { return b.getIsDestroyed(); }),
-                  bullets.end());
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](PlayerBullet& b) { return b.getIsDestroyed(); }), bullets.end());
     // 移除飞出屏幕的子弹
-    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](PlayerBullet& b)
-                                 { return b.getPosition().y + b.getHeight() < 0; }),
-                  bullets.end());
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](PlayerBullet& b) { return b.getPosition().y + b.getHeight() < 0; }), bullets.end());
 }
 
 void Player::renderBullets(SDL_Renderer* renderer)

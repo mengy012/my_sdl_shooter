@@ -15,16 +15,15 @@ PlayerBullet::PlayerBullet()
     position.x = 0.f;
     position.y = 0.f;
 
-    texture = std::shared_ptr<SDL_Texture>(
-        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bullet.png"),
-        [](SDL_Texture* tex)
-        {
-            if (tex)
-            {
-                SDL_DestroyTexture(tex);
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bullet texture destroyed\n");
-            }
-        });
+    texture = std::shared_ptr<SDL_Texture>(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/bullet.png"),
+                                           [](SDL_Texture* tex)
+                                           {
+                                               if (tex)
+                                               {
+                                                   SDL_DestroyTexture(tex);
+                                                   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bullet texture destroyed\n");
+                                               }
+                                           });
 
     if (!texture)
     {

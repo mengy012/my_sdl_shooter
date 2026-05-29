@@ -1,8 +1,6 @@
 #include "explosion.h"
 
-Explosion::Explosion(float x, float y, int width, int height,
-                     std::chrono::steady_clock::time_point start_time)
-    : start_time(start_time), texture(GetTexture())
+Explosion::Explosion(float x, float y, int width, int height, std::chrono::steady_clock::time_point start_time) : start_time(start_time), texture(GetTexture())
 {
     SDL_QueryTexture(texture.get(), NULL, NULL, &frame_width, &frame_height);
 
@@ -36,16 +34,15 @@ void Explosion::update(double)
 
 std::shared_ptr<SDL_Texture> Explosion::GetTexture(bool destroy)
 {
-    static std::shared_ptr<SDL_Texture> texture = std::shared_ptr<SDL_Texture>(
-        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/effect/explosion.png"),
-        [](SDL_Texture* tex)
-        {
-            if (tex)
-            {
-                SDL_DestroyTexture(tex);
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "explosion texture destroyed\n");
-            }
-        });
+    static std::shared_ptr<SDL_Texture> texture = std::shared_ptr<SDL_Texture>(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/effect/explosion.png"),
+                                                                               [](SDL_Texture* tex)
+                                                                               {
+                                                                                   if (tex)
+                                                                                   {
+                                                                                       SDL_DestroyTexture(tex);
+                                                                                       SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "explosion texture destroyed\n");
+                                                                                   }
+                                                                               });
 
     if (!texture)
     {

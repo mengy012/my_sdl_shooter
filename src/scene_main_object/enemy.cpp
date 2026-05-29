@@ -4,16 +4,15 @@
 
 Enemy::Enemy()
 {
-    texture = std::shared_ptr<SDL_Texture>(
-        IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/insect-1.png"),
-        [](SDL_Texture* tex)
-        {
-            if (tex)
-            {
-                SDL_DestroyTexture(tex);
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Enemy texture destroyed\n");
-            }
-        });
+    texture = std::shared_ptr<SDL_Texture>(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/insect-1.png"),
+                                           [](SDL_Texture* tex)
+                                           {
+                                               if (tex)
+                                               {
+                                                   SDL_DestroyTexture(tex);
+                                                   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Enemy texture destroyed\n");
+                                               }
+                                           });
 
     if (!texture)
     {

@@ -8,10 +8,9 @@
 class PlayerBullet
 {
   public:
-    PlayerBullet(
-        float x, float y,
-        const PlayerBullet& template_bullet); // 每次发射子弹时调用,传入玩家飞机位置和子弹对象模板
-    PlayerBullet();                           //
+    PlayerBullet(float x, float y,
+                 const PlayerBullet& template_bullet); // 每次发射子弹时调用,传入玩家飞机位置和子弹对象模板
+    PlayerBullet();                                    //
     ~PlayerBullet();
 
     SDL_FPoint& getPosition();

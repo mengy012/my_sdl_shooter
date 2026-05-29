@@ -9,8 +9,7 @@
 
 int main(int argc, char* argv[])
 {
-    Game::instance().init().setLogCategoryPriority(SDL_LOG_CATEGORY_APPLICATION,
-                                                   SDL_LOG_PRIORITY_DEBUG);
+    Game::instance().init().setLogCategoryPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
     Game::instance().run();
     return 0;
 }

@@ -8,10 +8,9 @@
 class EnemyBullet
 {
   public:
-    EnemyBullet(
-        float x, float y,
-        const EnemyBullet& template_bullet); // 每次发射子弹时调用,传入玩家飞机位置和子弹对象模板
-    EnemyBullet();                           //
+    EnemyBullet(float x, float y,
+                const EnemyBullet& template_bullet); // 每次发射子弹时调用,传入玩家飞机位置和子弹对象模板
+    EnemyBullet();                                   //
     ~EnemyBullet();
 
     SDL_FPoint& getPosition();

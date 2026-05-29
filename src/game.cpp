@@ -71,8 +71,7 @@ void Game::run()
 
             if (remaining > 2ms)
             {
-                auto sleep_ms =
-                    std::chrono::duration_cast<std::chrono::milliseconds>(remaining - 1ms);
+                auto sleep_ms = std::chrono::duration_cast<std::chrono::milliseconds>(remaining - 1ms);
                 SDL_Delay(static_cast<uint32_t>(sleep_ms.count()));
             }
             else
@@ -90,9 +89,7 @@ void Game::run()
         auto fps_count_elapsed = real_frame_end - fps_count_time_start;
         if (fps_count_elapsed >= 1s)
         {
-            current_fps = fps_count / std::chrono::duration_cast<std::chrono::duration<double>>(
-                                          fps_count_elapsed)
-                                          .count();
+            current_fps = fps_count / std::chrono::duration_cast<std::chrono::duration<double>>(fps_count_elapsed).count();
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "fps: %f", current_fps);
             fps_count_time_start = real_frame_end;
             fps_count = 0;
@@ -143,8 +140,7 @@ void Game::handleEvent(SDL_Event& event)
 
 void Game::update()
 {
-    current_scene->update(
-        std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
+    current_scene->update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
 }
 
 void Game::render()
@@ -164,13 +160,11 @@ void Game::render()
         pos += 3;
         cur_fps_text = cur_fps_text.substr(0, pos);
     }
-    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(
-        TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white));
+    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white));
     if (surface_text)
     {
         SDL_Rect text{0, 0, surface_text->w, surface_text->h};
-        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(
-            SDL_CreateTextureFromSurface(renderer.get(), surface_text.get()));
+        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(SDL_CreateTextureFromSurface(renderer.get(), surface_text.get()));
         if (texture_text)
         {
             SDL_RenderCopy(renderer.get(), texture_text.get(), NULL, &text);
@@ -234,8 +228,7 @@ Game& Game::init()
         is_running = false;
     }
     // 创建窗口
-    window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                  window_width, window_height, SDL_WINDOW_RESIZABLE));
+    window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_RESIZABLE));
     if (!window)
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl window init failed %s\n", SDL_GetError());

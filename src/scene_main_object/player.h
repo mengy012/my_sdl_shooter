@@ -50,8 +50,7 @@ class Player
     std::chrono::steady_clock::time_point last_shoot_time;                   // 上次射击时间
     std::chrono::nanoseconds shoot_cooldown{std::chrono::milliseconds(150)}; // 射击冷却时间
 
-    PlayerBullet
-        bullet_template; // 子弹对象模板,存放在玩家对象中,每次发射子弹时以它为基础创建子弹对象
+    PlayerBullet bullet_template;      // 子弹对象模板,存放在玩家对象中,每次发射子弹时以它为基础创建子弹对象
     std::vector<PlayerBullet> bullets; // 玩家子弹列表
 
     int health{3};      // 玩家生命值
