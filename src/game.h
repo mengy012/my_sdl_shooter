@@ -110,7 +110,7 @@ class Game
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
 
-    int fps = 160;                       // 游戏帧数
+    int fps = 320;                       // 游戏帧数
     std::chrono::nanoseconds frame_time; // 游戏帧数对应帧时间
     double current_fps;                  // 实时游戏帧数
 
