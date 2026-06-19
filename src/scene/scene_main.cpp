@@ -2,6 +2,7 @@
 #include "../game.h"
 #include "../scene_main_object/enemy_bullet.h"
 #include "../scene_main_object/item_life_restoring.h"
+#include "../scene_main_object/music_manager.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -14,9 +15,14 @@ SceneMain::SceneMain() {}
 SceneMain::~SceneMain()
 {
     Explosion::GetTexture(true);
+    Mix_HaltMusic();
 }
 
-void SceneMain::init() {}
+void SceneMain::init()
+{
+    // 播放背景音乐
+    Mix_PlayMusic(music_manager.getBackgroundMusic(), -1);
+}
 
 void SceneMain::updatePauseTextLayout()
 {
@@ -80,9 +86,9 @@ void SceneMain::update(double delta_time)
     }
     else
     {
-        player.keyBoardControl(delta_time);
-        player.updateBullets(delta_time, enemies);
-        player.update(enemies, enemy_bullets, items);
+        player.keyBoardControl(delta_time, music_manager);
+        player.updateBullets(delta_time, enemies, music_manager);
+        player.update(enemies, enemy_bullets, items, music_manager);
 
         updateEnemy(delta_time);
         updateEnemyBullets(delta_time);
@@ -183,6 +189,9 @@ void SceneMain::updateEnemy(double delta_time)
         if (enemy->getIsDestroyed())
         {
             enemyExplode(*enemy);
+            // 播放敌人爆炸音效
+            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_enemy_explode), 0);
+            // 生成物品
             {
                 if (Game::instance().getRandomFloat() > 0.4f)
                 {
@@ -220,6 +229,8 @@ void SceneMain::updateEnemyBullets(double delta_time)
             enemy.getLastShootTime() = now;
             enemy_bullets.emplace_back(enemy.getPosition().x + enemy.getWidth() / 2, enemy.getPosition().y + enemy.getHeight() / 2, enemy_bullet_template);
             enemy_bullets.back().setDirection(player.getPosition(), player.getWidth(), player.getHeight());
+            // 播放敌人射击音效
+            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_enemy_shoot), 0);
         }
     }
 
@@ -263,6 +274,9 @@ void SceneMain::playerExplode()
     if (!exploded)
     {
         explosions.emplace_back(player.getPosition().x, player.getPosition().y, player.getWidth(), player.getHeight(), std::chrono::steady_clock::now());
+        // 播放玩家爆炸音效
+        Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_player_explode), 0);
+
         exploded = true;
     }
 }

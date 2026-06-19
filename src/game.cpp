@@ -26,6 +26,7 @@ Game::~Game()
     window.reset();
 
     IMG_Quit();
+    Mix_CloseAudio();
     Mix_Quit();
     TTF_Quit();
     SDL_Quit();
@@ -254,6 +255,19 @@ Game& Game::init()
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl mixer init failed %s\n", SDL_GetError());
         is_running = false;
     }
+    // 初始化sdl_audio
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl audio init failed %s\n", SDL_GetError());
+        is_running = false;
+    }
+    // 设置音效channel数量
+    Mix_AllocateChannels(32);
+    // 设置音乐音量
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+    // 设置所有音效音量
+    Mix_Volume(-1, MIX_MAX_VOLUME / 2);
+
     // 初始化sdl_ttf
     if (TTF_Init())
     {

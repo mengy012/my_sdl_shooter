@@ -1,5 +1,6 @@
 #include "player.h"
 #include "../game.h"
+#include "./music_manager.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <algorithm>
@@ -65,7 +66,7 @@ void Player::render(SDL_Renderer* renderer)
     SDL_RenderCopy(renderer, texture.get(), NULL, &player_rect);
 }
 
-void Player::keyBoardControl(double delta_time)
+void Player::keyBoardControl(double delta_time, MusicManager& music_manager)
 {
 
     auto keyboard_state = SDL_GetKeyboardState(NULL);
@@ -120,12 +121,14 @@ void Player::keyBoardControl(double delta_time)
         if (now - last_shoot_time >= shoot_cooldown)
         {
             shoot();
+            // 播放射击音效
+            Mix_PlayChannel(0, music_manager.getChunk(ChunkType::Effect_player_shoot), 0);
             last_shoot_time = now;
         }
     }
 }
 
-void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets, std::list<std::unique_ptr<Item>>& items)
+void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets, std::list<std::unique_ptr<Item>>& items, MusicManager& music_manager)
 {
     SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
 
@@ -141,6 +144,8 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
         {
             health -= bullet.getDamage();
             bullet.getIsDestroyed() = true;
+            // 播放被敌人击中音效
+            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_hit), 0);
         }
     }
     enemy_bullets.remove_if([](EnemyBullet& b) { return b.getIsDestroyed(); }); // 移除已销毁的子弹
@@ -174,6 +179,8 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
                 item->getIsDestroyed() = true;
                 break;
             }
+            // 播放拾取物品音效
+            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_get_item), 0);
         }
     }
 
@@ -192,7 +199,7 @@ void Player::shoot()
     bullets.emplace_back(bullet_x, bullet_y, bullet_template);
 }
 
-void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies)
+void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies, MusicManager& music_manager)
 {
     for (auto& bullet : bullets)
     {
@@ -210,6 +217,8 @@ void Player::updateBullets(double delta_time, std::vector<Enemy>& enemies)
             {
                 enemy->getHealth() -= bullet->getDamage();
                 bullet->getIsDestroyed() = true;
+                // 播放击中敌人音效
+                Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_hit), 0);
                 break;
             }
             ++enemy;
