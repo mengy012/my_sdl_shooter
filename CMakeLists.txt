@@ -22,7 +22,8 @@ add_subdirectory(src/scene_main_object)
 # ----------------------------
 # 可执行目标
 # ----------------------------
-add_executable(my_sdl_shooter src/main.cpp src/game.cpp)
+add_executable(my_sdl_shooter src/main.cpp src/game.cpp
+    src/background.cpp)
 
 # ----------------------------
 # 链接库
