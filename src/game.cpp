@@ -141,6 +141,11 @@ void Game::handleEvent(SDL_Event& event)
 
 void Game::update()
 {
+    // 更新背景
+    far_stars_.update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
+    near_stars_.update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
+
+    // 更新场景
     current_scene->update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
 }
 
@@ -152,6 +157,10 @@ void Game::render()
     // SDL_Texture* img_texture = IMG_LoadTexture(renderer.get(), "../../assets/image/pause.png");
     // SDL_Rect img{window_width - 48, 0, 48, 48};
     // SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
+
+    // 渲染背景
+    far_stars_.render();
+    near_stars_.render();
 
     SDL_Color white{255, 255, 255, 255};
     std::string cur_fps_text;
@@ -289,6 +298,10 @@ Game& Game::init()
 
     // 计算游戏帧数对应帧时间
     frame_time = std::chrono::duration_cast<std::chrono::nanoseconds>(1s) / fps;
+
+    // 初始化背景
+    far_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-B.png"), 20.f);
+    near_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-A.png"));
 
     return *this;
 }

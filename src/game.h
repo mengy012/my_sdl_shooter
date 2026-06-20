@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./background.h"
 #include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -118,4 +119,9 @@ class Game
     std::chrono::nanoseconds delta_time;               // 实际每帧用时,控制飞机速度
 
     std::random_device::result_type random_seed{std::random_device{}()}; // 随机数种子
+
+    // 远处背景
+    Background far_stars_;
+    // 近处背景
+    Background near_stars_;
 };
