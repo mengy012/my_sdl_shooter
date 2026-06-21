@@ -133,7 +133,7 @@ void Player::keyBoardControl(double delta_time, MusicManager& music_manager)
     }
 }
 
-void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets, std::list<std::unique_ptr<Item>>& items, MusicManager& music_manager)
+void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_bullets, std::list<std::unique_ptr<Item>>& items, MusicManager& music_manager, int& score)
 {
     SDL_Rect player_rect{static_cast<int>(position.x), static_cast<int>(position.y), width, height};
 
@@ -187,6 +187,8 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
                 item->getIsDestroyed() = true;
                 break;
             }
+            // 增加得分
+            score += 10;
             // 播放拾取物品音效
             Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_get_item), 0);
         }

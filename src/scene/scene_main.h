@@ -61,6 +61,11 @@ class SceneMain : public Scene
     // 玩家生命值纹理
     std::unique_ptr<SDL_Texture, DeleteTexture> player_health_texture;
 
+    // 绘制玩家得分
+    void renderScore(SDL_Renderer* renderer);
+    // 玩家得分
+    int score{0};
+
     // 敌人生成模板
     Enemy enemy_template;
 

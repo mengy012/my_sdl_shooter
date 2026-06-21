@@ -103,14 +103,15 @@ void SceneMain::renderFps(SDL_Renderer* renderer)
     }
 }
 
-void SceneMain::renderPlayerHealth(SDL_Renderer* renderer) {
+void SceneMain::renderPlayerHealth(SDL_Renderer* renderer)
+{
     SDL_Texture* texture = player_health_texture.get();
 
     int health_max = player.getHealthMax();
     int health_current = player.getHealth();
 
     // 渲染玩家最大生命值
-    SDL_SetTextureColorMod(texture, 100,100,100);
+    SDL_SetTextureColorMod(texture, 100, 100, 100);
     SDL_Rect health_rect{0, 32, 32, 32};
     for (int i = 0; i < health_max; i++)
     {
@@ -119,12 +120,37 @@ void SceneMain::renderPlayerHealth(SDL_Renderer* renderer) {
     }
 
     // 渲染玩家当前生命值
-    SDL_SetTextureColorMod(texture, 255,255,255);
+    SDL_SetTextureColorMod(texture, 255, 255, 255);
     health_rect = SDL_Rect{0, 32, 32, 32};
     for (int i = 0; i < health_current; i++)
     {
         SDL_RenderCopy(renderer, texture, NULL, &health_rect);
         health_rect.x += 32 + 5; // 每个心之间间隔5像素
+    }
+}
+
+void SceneMain::renderScore(SDL_Renderer* renderer)
+{
+    // 字体
+    TTF_Font* font = Game::instance().getFont();
+    // 窗口宽度
+    int window_width = Game::instance().get_window_width();
+    // 窗口高度
+    int window_height = Game::instance().get_window_height();
+
+    // 渲染得分
+    SDL_Color white{255, 255, 255, 255};
+    std::string score_text;
+    score_text += "Score:" + std::to_string(score);
+    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(font, score_text.c_str(), white));
+    if (surface_text)
+    {
+        SDL_Rect text{window_width - surface_text->w, 48, surface_text->w, surface_text->h};
+        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(SDL_CreateTextureFromSurface(renderer, surface_text.get()));
+        if (texture_text)
+        {
+            SDL_RenderCopy(renderer, texture_text.get(), NULL, &text);
+        }
     }
 }
 
@@ -167,7 +193,7 @@ void SceneMain::update(double delta_time)
     {
         player.keyBoardControl(delta_time, music_manager);
         player.updateBullets(delta_time, enemies, music_manager);
-        player.update(enemies, enemy_bullets, items, music_manager);
+        player.update(enemies, enemy_bullets, items, music_manager, score);
 
         updateEnemy(delta_time);
         updateEnemyBullets(delta_time);
@@ -213,6 +239,8 @@ void SceneMain::render()
     renderFps(Game::instance().getRenderer());
     // 绘制玩家生命值
     renderPlayerHealth(Game::instance().getRenderer());
+    // 绘制玩家得分
+    renderScore(Game::instance().getRenderer());
 }
 
 void SceneMain::clean() {}
@@ -254,6 +282,8 @@ void SceneMain::updateEnemy(double delta_time)
         if (enemy->getIsDestroyed())
         {
             enemyExplode(*enemy);
+            // 增加得分
+            score += 20;
             // 播放敌人爆炸音效
             Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_enemy_explode), 0);
             // 生成物品
