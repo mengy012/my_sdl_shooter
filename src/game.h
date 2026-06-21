@@ -87,6 +87,7 @@ class Game
     SDL_Renderer* getRenderer() const;
     TTF_Font* getFont() const;
     bool& getIsRunning();
+    double getCurrentFps() const;
     int get_window_width() const;
     int get_window_height() const;
 

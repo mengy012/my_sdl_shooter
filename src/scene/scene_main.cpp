@@ -22,6 +22,14 @@ void SceneMain::init()
 {
     // 播放背景音乐
     Mix_PlayMusic(music_manager.getBackgroundMusic(), -1);
+
+    // 加载玩家生命值纹理
+    player_health_texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/heart_fill (1).png"));
+    if (!player_health_texture)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load player health texture: %s\n", SDL_GetError());
+        Game::instance().getIsRunning() = false;
+    }
 }
 
 void SceneMain::updatePauseTextLayout()
@@ -47,6 +55,77 @@ void SceneMain::updatePauseTextLayout()
 
     pause_text_rect = {center_x - pause_text_w / 2, center_y - pause_text_h - 10, pause_text_w, pause_text_h};
     continue_button_rect = {center_x - continue_button_w / 2, center_y + 10, continue_button_w, continue_button_h};
+}
+
+void SceneMain::renderPauseText(SDL_Renderer* renderer)
+{
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 160);
+    SDL_Rect overlay{0, 0, Game::instance().get_window_width(), Game::instance().get_window_height()};
+    SDL_RenderFillRect(renderer, &overlay);
+
+    SDL_Color white{255, 255, 255, 255};
+    std::unique_ptr<SDL_Surface, DeleteSurface> pause_text_surface;
+    pause_text_surface.reset(TTF_RenderUTF8_Blended(Game::instance().getFont(), "游戏已暂停", white));
+    std::unique_ptr<SDL_Texture, DeleteTexture> pause_text_texture(SDL_CreateTextureFromSurface(renderer, pause_text_surface.get()));
+    SDL_RenderCopy(renderer, pause_text_texture.get(), NULL, &pause_text_rect);
+
+    std::unique_ptr<SDL_Texture, DeleteTexture> continue_button;
+    continue_button.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
+    if (!continue_button)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue button: %s\n", SDL_GetError());
+        Game::instance().getIsRunning() = false;
+    }
+    SDL_RenderCopy(renderer, continue_button.get(), NULL, &continue_button_rect);
+}
+
+void SceneMain::renderFps(SDL_Renderer* renderer)
+{
+    SDL_Color white{255, 255, 255, 255};
+    std::string cur_fps_text;
+    {
+        cur_fps_text += "fps: " + std::to_string(Game::instance().getCurrentFps());
+        auto pos = cur_fps_text.find('.');
+        pos += 3;
+        cur_fps_text = cur_fps_text.substr(0, pos);
+    }
+    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(Game::instance().getFont(), cur_fps_text.c_str(), white));
+    if (surface_text)
+    {
+        SDL_Rect text{0, 0, surface_text->w, surface_text->h};
+        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(SDL_CreateTextureFromSurface(renderer, surface_text.get()));
+        if (texture_text)
+        {
+            SDL_RenderCopy(renderer, texture_text.get(), NULL, &text);
+        }
+    }
+}
+
+void SceneMain::renderPlayerHealth(SDL_Renderer* renderer) {
+    SDL_Texture* texture = player_health_texture.get();
+
+    int health_max = player.getHealthMax();
+    int health_current = player.getHealth();
+
+    // 渲染玩家最大生命值
+    SDL_SetTextureColorMod(texture, 100,100,100);
+    SDL_Rect health_rect{0, 32, 32, 32};
+    for (int i = 0; i < health_max; i++)
+    {
+        SDL_RenderCopy(renderer, texture, NULL, &health_rect);
+        health_rect.x += 32 + 5; // 每个心之间间隔5像素
+    }
+
+    // 渲染玩家当前生命值
+    SDL_SetTextureColorMod(texture, 255,255,255);
+    health_rect = SDL_Rect{0, 32, 32, 32};
+    for (int i = 0; i < health_current; i++)
+    {
+        SDL_RenderCopy(renderer, texture, NULL, &health_rect);
+        health_rect.x += 32 + 5; // 每个心之间间隔5像素
+    }
 }
 
 void SceneMain::handleEvent(SDL_Event& event)
@@ -126,28 +205,14 @@ void SceneMain::render()
 
     if (is_paused)
     {
-        SDL_Renderer* renderer = Game::instance().getRenderer();
-
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 160);
-        SDL_Rect overlay{0, 0, Game::instance().get_window_width(), Game::instance().get_window_height()};
-        SDL_RenderFillRect(renderer, &overlay);
-
-        SDL_Color white{255, 255, 255, 255};
-        std::unique_ptr<SDL_Surface, DeleteSurface> pause_text_surface;
-        pause_text_surface.reset(TTF_RenderUTF8_Blended(Game::instance().getFont(), "游戏已暂停", white));
-        std::unique_ptr<SDL_Texture, DeleteTexture> pause_text_texture(SDL_CreateTextureFromSurface(renderer, pause_text_surface.get()));
-        SDL_RenderCopy(renderer, pause_text_texture.get(), NULL, &pause_text_rect);
-
-        std::unique_ptr<SDL_Texture, DeleteTexture> continue_button;
-        continue_button.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/play_fill.png"));
-        if (!continue_button)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load continue button: %s\n", SDL_GetError());
-            Game::instance().getIsRunning() = false;
-        }
-        SDL_RenderCopy(renderer, continue_button.get(), NULL, &continue_button_rect);
+        // 渲染暂停文本
+        renderPauseText(Game::instance().getRenderer());
     }
+
+    // 绘制帧数
+    renderFps(Game::instance().getRenderer());
+    // 绘制玩家生命值
+    renderPlayerHealth(Game::instance().getRenderer());
 }
 
 void SceneMain::clean() {}

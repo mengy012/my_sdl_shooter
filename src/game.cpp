@@ -162,25 +162,6 @@ void Game::render()
     far_stars_.render();
     near_stars_.render();
 
-    SDL_Color white{255, 255, 255, 255};
-    std::string cur_fps_text;
-    {
-        cur_fps_text += "fps: " + std::to_string(current_fps);
-        auto pos = cur_fps_text.find('.');
-        pos += 3;
-        cur_fps_text = cur_fps_text.substr(0, pos);
-    }
-    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(font.get(), cur_fps_text.c_str(), white));
-    if (surface_text)
-    {
-        SDL_Rect text{0, 0, surface_text->w, surface_text->h};
-        std::unique_ptr<SDL_Texture, DeleteTexture> texture_text(SDL_CreateTextureFromSurface(renderer.get(), surface_text.get()));
-        if (texture_text)
-        {
-            SDL_RenderCopy(renderer.get(), texture_text.get(), NULL, &text);
-        }
-    }
-
     current_scene->render();
     SDL_RenderPresent(renderer.get());
 }
@@ -198,6 +179,11 @@ TTF_Font* Game::getFont() const
 bool& Game::getIsRunning()
 {
     return is_running;
+}
+
+double Game::getCurrentFps() const
+{
+    return current_fps;
 }
 
 int Game::get_window_width() const

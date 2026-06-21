@@ -53,6 +53,11 @@ int& Player::getHealth()
     return health;
 }
 
+int Player::getHealthMax()
+{
+    return health_max;
+}
+
 bool& Player::getIsLive()
 {
     return is_live;
@@ -169,7 +174,10 @@ void Player::update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& enemy_b
             switch (item->getType())
             {
             case ItemType::Life:
-                health += 1;
+                if (health < health_max)
+                {
+                    health += 1;
+                }
                 item->getIsDestroyed() = true; // 让updateItems()移除已销毁的物品
                 break;
             case ItemType::Shield:

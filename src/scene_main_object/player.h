@@ -1,11 +1,10 @@
 #pragma once
 
 #include "../game.h"
+#include "./music_manager.h"
 #include "enemy.h"
 #include "item.h"
 #include "player_bullet.h"
-#include "./music_manager.h"
-
 
 #include <SDL.h>
 #include <chrono>
@@ -29,16 +28,16 @@ class Player
     int getWidth();
     int getHeight();
     int& getHealth();
+    int getHealthMax();
     bool& getIsLive();
 
     void render(SDL_Renderer* renderer);
-    void keyBoardControl(double delta_time, MusicManager& music_manager); // 使用键盘控制玩家移动
-    void update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& bullets,
-                std::list<std::unique_ptr<Item>>& items, MusicManager& music_manager); // 更新玩家状态
+    void keyBoardControl(double delta_time, MusicManager& music_manager);                                                                            // 使用键盘控制玩家移动
+    void update(std::vector<Enemy>& enemies, std::list<EnemyBullet>& bullets, std::list<std::unique_ptr<Item>>& items, MusicManager& music_manager); // 更新玩家状态
 
-    void shoot();                                                       // 射击子弹
+    void shoot();                                                                                    // 射击子弹
     void updateBullets(double delta_time, std::vector<Enemy>& enemies, MusicManager& music_manager); // 更新子弹位置
-    void renderBullets(SDL_Renderer* renderer);                         // 渲染子弹
+    void renderBullets(SDL_Renderer* renderer);                                                      // 渲染子弹
   private:
     std::unique_ptr<SDL_Texture, DeleteTexture> texture;
     SDL_FPoint position{0, 0};
@@ -55,6 +54,7 @@ class Player
     PlayerBullet bullet_template;      // 子弹对象模板,存放在玩家对象中,每次发射子弹时以它为基础创建子弹对象
     std::vector<PlayerBullet> bullets; // 玩家子弹列表
 
-    int health{3};      // 玩家生命值
-    bool is_live{true}; // 玩家是否存活
+    int health_max{3};              // 玩家最大生命值
+    int health{health_max}; // 玩家生命值
+    bool is_live{true};             // 玩家是否存活
 };

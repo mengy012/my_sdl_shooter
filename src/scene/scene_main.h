@@ -49,7 +49,17 @@ class SceneMain : public Scene
     SDL_Rect pause_text_rect{0, 0, 0, 0};
     SDL_Rect continue_button_rect{0, 0, 0, 0};
 
+    // 更新暂停文本布局
     void updatePauseTextLayout();
+    // 绘制暂停文本
+    void renderPauseText(SDL_Renderer* renderer);
+
+    // 绘制帧数
+    void renderFps(SDL_Renderer* renderer);
+    // 绘制玩家生命值
+    void renderPlayerHealth(SDL_Renderer* renderer);
+    // 玩家生命值纹理
+    std::unique_ptr<SDL_Texture, DeleteTexture> player_health_texture;
 
     // 敌人生成模板
     Enemy enemy_template;
