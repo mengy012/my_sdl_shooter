@@ -88,6 +88,5 @@ class SceneMain : public Scene
     // 物品列表
     std::list<std::unique_ptr<Item>> items;
 
-    // 音乐管理器
-    MusicManager music_manager;
+    
 };

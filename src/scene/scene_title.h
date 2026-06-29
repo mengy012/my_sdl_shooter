@@ -13,4 +13,7 @@ class SceneTitle : public Scene
     void render() override;
     void clean() override;
     SceneState getState() override;
+
+  private:
+    SceneState state{SceneState::Title};
 };

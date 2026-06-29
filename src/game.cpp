@@ -216,6 +216,16 @@ float Game::getRandomFloat() const noexcept
     return dist(rng);
 }
 
+Mix_Chunk* Game::getChunk(ChunkType type)
+{
+    return music_manager_.getChunk(type);
+}
+
+Mix_Music* Game::getBackgroundMusic(MusicType type)
+{
+    return music_manager_.getBackgroundMusic(type);
+}
+
 // 资源已使用智能指针管理,可能删除
 void Game::clean() {}
 
@@ -282,8 +292,9 @@ Game& Game::init()
         }
     }
     // 创建场景
-    current_scene = std::make_unique<SceneMain>();
+    current_scene = std::make_unique<SceneTitle>();
     current_scene->init();
+    current_state = current_scene->getState();
 
     // 计算游戏帧数对应帧时间
     frame_time = std::chrono::duration_cast<std::chrono::nanoseconds>(1s) / fps;

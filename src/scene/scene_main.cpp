@@ -21,7 +21,7 @@ SceneMain::~SceneMain()
 void SceneMain::init()
 {
     // 播放背景音乐
-    Mix_PlayMusic(music_manager.getBackgroundMusic(), -1);
+    Mix_PlayMusic(Game::instance().getBackgroundMusic(MusicType::Main), -1);
 
     // 加载玩家生命值纹理
     player_health_texture.reset(IMG_LoadTexture(Game::instance().getRenderer(), "../../assets/image/heart_fill (1).png"));
@@ -191,9 +191,9 @@ void SceneMain::update(double delta_time)
     }
     else
     {
-        player.keyBoardControl(delta_time, music_manager);
-        player.updateBullets(delta_time, enemies, music_manager);
-        player.update(enemies, enemy_bullets, items, music_manager, score);
+        player.keyBoardControl(delta_time);
+        player.updateBullets(delta_time, enemies);
+        player.update(enemies, enemy_bullets, items, score);
 
         updateEnemy(delta_time);
         updateEnemyBullets(delta_time);
@@ -290,7 +290,7 @@ void SceneMain::updateEnemy(double delta_time)
             // 增加得分
             score += 20;
             // 播放敌人爆炸音效
-            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_enemy_explode), 0);
+            Mix_PlayChannel(-1, Game::instance().getChunk(ChunkType::Effect_enemy_explode), 0);
             // 生成物品
             {
                 if (Game::instance().getRandomFloat() > 0.4f)
@@ -330,7 +330,7 @@ void SceneMain::updateEnemyBullets(double delta_time)
             enemy_bullets.emplace_back(enemy.getPosition().x + enemy.getWidth() / 2, enemy.getPosition().y + enemy.getHeight() / 2, enemy_bullet_template);
             enemy_bullets.back().setDirection(player.getPosition(), player.getWidth(), player.getHeight());
             // 播放敌人射击音效
-            Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_enemy_shoot), 0);
+            Mix_PlayChannel(-1, Game::instance().getChunk(ChunkType::Effect_enemy_shoot), 0);
         }
     }
 
@@ -375,7 +375,7 @@ void SceneMain::playerExplode()
     {
         explosions.emplace_back(player.getPosition().x, player.getPosition().y, player.getWidth(), player.getHeight(), std::chrono::steady_clock::now());
         // 播放玩家爆炸音效
-        Mix_PlayChannel(-1, music_manager.getChunk(ChunkType::Effect_player_explode), 0);
+        Mix_PlayChannel(-1, Game::instance().getChunk(ChunkType::Effect_player_explode), 0);
 
         exploded = true;
     }

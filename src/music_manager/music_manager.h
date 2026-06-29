@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../game.h"
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <memory>
@@ -16,17 +15,23 @@ enum class ChunkType
     Effect_get_item,
 };
 
+enum class MusicType
+{
+    Title,
+    Main,
+};
+
 class MusicManager
 {
   public:
-    MusicManager();
+    MusicManager() = default;
     ~MusicManager();
 
     // 获取音效
     Mix_Chunk* getChunk(ChunkType type);
     // 获取背景音乐
-    Mix_Music* getBackgroundMusic();
+    Mix_Music* getBackgroundMusic(MusicType type);
   private:
     std::unordered_map<ChunkType, Mix_Chunk*> chunks_;
-    Mix_Music* background_music_{nullptr};
+    std::unordered_map<MusicType, Mix_Music*> background_musics_;
 };

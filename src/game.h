@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./background.h"
+#include "./music_manager/music_manager.h"
 #include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -100,6 +101,12 @@ class Game
     // 获取0-1之间的随机浮点数
     float getRandomFloat() const noexcept;
 
+    // gets 
+    // 获取音效
+    Mix_Chunk* getChunk(ChunkType type);
+    // 获取背景音乐
+    Mix_Music* getBackgroundMusic(MusicType type);
+
   private:
     Game();
     ~Game();
@@ -127,4 +134,7 @@ class Game
     Background far_stars_;
     // 近处背景
     Background near_stars_;
+
+    // 音乐管理器
+    MusicManager music_manager_;
 };

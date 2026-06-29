@@ -16,5 +16,5 @@ void SceneTitle::clean() {}
 
 SceneState SceneTitle::getState()
 {
-    return SceneState();
+    return state;
 }
