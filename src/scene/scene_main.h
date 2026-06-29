@@ -79,6 +79,8 @@ class SceneMain : public Scene
     EnemyBullet enemy_bullet_template;    // 子弹对象模板,存放在敌机对象中,每次发射子弹时以它为基础创建子弹对象
     std::list<EnemyBullet> enemy_bullets; // 敌机子弹列表
 
+    // 爆炸纹理管理器
+    ExplosionTextureManager explosion_texture_manager;
     // 爆炸效果列表（包括玩家和敌人爆炸）
     std::list<Explosion> explosions;
 

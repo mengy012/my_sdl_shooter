@@ -14,7 +14,6 @@ SceneMain::SceneMain() {}
 
 SceneMain::~SceneMain()
 {
-    Explosion::GetTexture(true);
     Mix_HaltMusic();
 }
 
@@ -365,7 +364,7 @@ void SceneMain::renderEnemyBullets(SDL_Renderer* renderer)
 
 void SceneMain::enemyExplode(Enemy& enemy)
 {
-    explosions.emplace_back(enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(), enemy.getHeight(), std::chrono::steady_clock::now());
+    explosions.emplace_back(enemy.getPosition().x, enemy.getPosition().y, enemy.getWidth(), enemy.getHeight(), std::chrono::steady_clock::now(), explosion_texture_manager.get_texture());
 }
 
 void SceneMain::playerExplode()
@@ -373,7 +372,7 @@ void SceneMain::playerExplode()
     static bool exploded = false; // 玩家是否爆炸过
     if (!exploded)
     {
-        explosions.emplace_back(player.getPosition().x, player.getPosition().y, player.getWidth(), player.getHeight(), std::chrono::steady_clock::now());
+        explosions.emplace_back(player.getPosition().x, player.getPosition().y, player.getWidth(), player.getHeight(), std::chrono::steady_clock::now(), explosion_texture_manager.get_texture());
         // 播放玩家爆炸音效
         Mix_PlayChannel(-1, Game::instance().getChunk(ChunkType::Effect_player_explode), 0);
 

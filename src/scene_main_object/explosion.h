@@ -6,12 +6,23 @@
 #include <chrono>
 #include <memory>
 
+class ExplosionTextureManager
+{
+  public:
+    ExplosionTextureManager();
+    ~ExplosionTextureManager();
+    SDL_Texture* get_texture();
+
+  private:
+    SDL_Texture* texture_{nullptr};
+};
+
 class Explosion
 {
   public:
     Explosion() = default;
     Explosion(float x, float y, int width, int height,
-              std::chrono::steady_clock::time_point start_time); // 传入敌人坐标,计算爆炸位置
+              std::chrono::steady_clock::time_point start_time, SDL_Texture* texture); // 传入敌人坐标,计算爆炸位置
     ~Explosion() = default;
 
     void render(SDL_Renderer* renderer);
@@ -25,8 +36,6 @@ class Explosion
     }
     void update(double delta_time);
 
-    static std::shared_ptr<SDL_Texture> GetTexture(bool destroy = false);
-
   private:
     SDL_FPoint position;                              // 爆炸位置
     int frame_width{0};                               // 爆炸帧宽度
@@ -36,5 +45,5 @@ class Explosion
     std::chrono::steady_clock::time_point start_time; // 开始时间
     bool is_finished{false};                          // 是否完成
 
-    std::shared_ptr<SDL_Texture> texture; // 爆炸纹理
+    SDL_Texture* texture_{nullptr}; // 爆炸纹理
 };
