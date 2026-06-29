@@ -131,10 +131,13 @@ void Game::handleEvent(SDL_Event& event)
             {
                 changeScene(std::make_unique<SceneTitle>());
             }
-
-            if (event.key.keysym.scancode == SDL_SCANCODE_J && current_state == SceneState::Title)
+            else if (event.key.keysym.scancode == SDL_SCANCODE_J && current_state == SceneState::Title)
             {
                 changeScene(std::make_unique<SceneMain>());
+            }
+            else if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE && current_state == SceneState::Title)
+            {
+                is_running = false;
             }
             break;
         }
@@ -174,7 +177,7 @@ SDL_Renderer* Game::getRenderer() const
     return renderer.get();
 }
 
-TTF_Font* Game::getFont(FontType font_type) 
+TTF_Font* Game::getFont(FontType font_type)
 {
     return font_manager_.getFont(font_type);
 }

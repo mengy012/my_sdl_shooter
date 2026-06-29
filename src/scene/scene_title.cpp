@@ -19,9 +19,9 @@ void SceneTitle::update(double delta_time)
 {
     // 控制文本闪烁显示
     time_count_ += delta_time;
-    if (time_count_ >= 2.0)
+    if (time_count_ >= 1.0f)
     {
-        time_count_ = .0;
+        time_count_ -= 1.0f;
     }
 }
 
@@ -34,7 +34,7 @@ void SceneTitle::render()
     SDL_Color textColor = {255, 255, 255, 255};
     // 渲染文本
     renderText(renderer, font, "SDL太空战机", textColor, 0.25f);
-    if (time_count_ >= 0.75f)
+    if (time_count_ >= 0.5f)
         renderText(renderer, font, "按J开始游戏", textColor, 0.75f, 0.5f);
 }
 
