@@ -19,6 +19,7 @@ find_package(SDL2_ttf REQUIRED)
 add_subdirectory(src/scene)
 add_subdirectory(src/scene_main_object)
 add_subdirectory(src/music_manager)
+add_subdirectory(src/font_manager)
 
 # ----------------------------
 # 可执行目标
@@ -39,6 +40,7 @@ target_link_libraries(my_sdl_shooter
         scene
         scene_main_object
         music_manager
+        font_manager
 )
 
 # ----------------------------

@@ -2,6 +2,7 @@
 
 #include "./background.h"
 #include "./music_manager/music_manager.h"
+#include "./font_manager/font_manager.h"
 #include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -86,7 +87,7 @@ class Game
     void render();
 
     SDL_Renderer* getRenderer() const;
-    TTF_Font* getFont() const;
+    TTF_Font* getFont(FontType font_type);
     bool& getIsRunning();
     double getCurrentFps() const;
     int get_window_width() const;
@@ -117,7 +118,7 @@ class Game
     std::unique_ptr<Scene> current_scene;                   // 当前场景
     std::unique_ptr<SDL_Window, DeleteWindow> window;       // 窗口
     std::unique_ptr<SDL_Renderer, DeleteRenderer> renderer; // 渲染器
-    std::unique_ptr<TTF_Font, DeleteFont> font;             // 字体
+    FontManager font_manager_;                             // 字体管理器
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
 

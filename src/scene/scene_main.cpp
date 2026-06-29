@@ -47,7 +47,7 @@ void SceneMain::updatePauseTextLayout()
     int continue_button_w = 0;
     int continue_button_h = 0;
 
-    TTF_SizeUTF8(Game::instance().getFont(), pause_text.data(), &pause_text_w, &pause_text_h);
+    TTF_SizeUTF8(Game::instance().getFont(FontType::Default), pause_text.data(), &pause_text_w, &pause_text_h);
     SDL_QueryTexture(continue_button.get(), nullptr, nullptr, &continue_button_w, &continue_button_h);
 
     const int center_x = Game::instance().get_window_width() / 2;
@@ -67,7 +67,7 @@ void SceneMain::renderPauseText(SDL_Renderer* renderer)
 
     SDL_Color white{255, 255, 255, 255};
     std::unique_ptr<SDL_Surface, DeleteSurface> pause_text_surface;
-    pause_text_surface.reset(TTF_RenderUTF8_Blended(Game::instance().getFont(), "游戏已暂停", white));
+    pause_text_surface.reset(TTF_RenderUTF8_Blended(Game::instance().getFont(FontType::Default), "游戏已暂停", white));
     std::unique_ptr<SDL_Texture, DeleteTexture> pause_text_texture(SDL_CreateTextureFromSurface(renderer, pause_text_surface.get()));
     SDL_RenderCopy(renderer, pause_text_texture.get(), NULL, &pause_text_rect);
 
@@ -91,7 +91,7 @@ void SceneMain::renderFps(SDL_Renderer* renderer)
         pos += 3;
         cur_fps_text = cur_fps_text.substr(0, pos);
     }
-    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(Game::instance().getFont(), cur_fps_text.c_str(), white));
+    std::unique_ptr<SDL_Surface, DeleteSurface> surface_text(TTF_RenderUTF8_Blended(Game::instance().getFont(FontType::Default), cur_fps_text.c_str(), white));
     if (surface_text)
     {
         SDL_Rect text{0, 0, surface_text->w, surface_text->h};
@@ -132,7 +132,7 @@ void SceneMain::renderPlayerHealth(SDL_Renderer* renderer)
 void SceneMain::renderScore(SDL_Renderer* renderer)
 {
     // 字体
-    TTF_Font* font = Game::instance().getFont();
+    TTF_Font* font = Game::instance().getFont(FontType::Default);
     // 窗口宽度
     int window_width = Game::instance().get_window_width();
     // 窗口高度

@@ -43,7 +43,7 @@ class SceneMain : public Scene
     void renderItems(SDL_Renderer* renderer); // 渲染物品
   private:
     SceneState state{SceneState::Main};
-    
+
     Player player; // 玩家飞机
 
     ButtonPause pauseButton; // 暂停按钮
@@ -87,6 +87,4 @@ class SceneMain : public Scene
 
     // 物品列表
     std::list<std::unique_ptr<Item>> items;
-
-    
 };

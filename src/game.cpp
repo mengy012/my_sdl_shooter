@@ -22,7 +22,7 @@ Game::~Game()
 {
     // sdl资源释放一定要在sdl_quit之前,否则可能会崩溃(坑死我了😡)
     current_scene.reset();
-    font.reset();
+    // font.reset();
     renderer.reset();
     window.reset();
 
@@ -174,9 +174,9 @@ SDL_Renderer* Game::getRenderer() const
     return renderer.get();
 }
 
-TTF_Font* Game::getFont() const
+TTF_Font* Game::getFont(FontType font_type) 
 {
-    return font.get();
+    return font_manager_.getFont(font_type);
 }
 
 bool& Game::getIsRunning()
@@ -281,15 +281,6 @@ Game& Game::init()
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl ttf init failed %s\n", SDL_GetError());
         is_running = false;
-    }
-    else
-    {
-        font.reset(TTF_OpenFont("../../assets/font/VonwaonBitmap-12px.ttf", 24));
-        if (!font)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_openfont failed %s\n", SDL_GetError());
-            is_running = false;
-        }
     }
     // 创建场景
     current_scene = std::make_unique<SceneTitle>();
