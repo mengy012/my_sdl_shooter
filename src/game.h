@@ -8,6 +8,14 @@
 #include <memory>
 #include <random>
 
+// 游戏状态枚举
+enum class GameState
+{
+    Title,
+    Main,
+    End
+};
+
 class DeleteWindow // sdl_window删除器
 {
   public:

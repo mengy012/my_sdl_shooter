@@ -1,6 +1,7 @@
 add_library(scene STATIC
     ./scene.cpp
     ./scene_main.cpp
+    ./scene_title.cpp
 )
 
 target_include_directories(scene PUBLIC ./)
