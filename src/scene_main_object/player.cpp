@@ -1,6 +1,6 @@
 #include "player.h"
 #include "../game.h"
-#include "./music_manager.h"
+#include "../music_manager/music_manager.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <algorithm>

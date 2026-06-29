@@ -1,5 +1,6 @@
 #include "game.h"
 #include "./scene/scene_main.h"
+#include "./scene/scene_title.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -111,6 +112,7 @@ void Game::changeScene(std::unique_ptr<Scene> Scene)
     {
         current_scene->init();
     }
+    current_state = current_scene->getState();
 }
 
 void Game::handleEvent(SDL_Event& event)
@@ -125,14 +127,15 @@ void Game::handleEvent(SDL_Event& event)
             break;
         case SDL_KEYDOWN:
             // 处理键盘按下事件
-            if (event.key.keysym.sym == SDLK_ESCAPE)
+            if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE && current_state == SceneState::Main)
             {
-                is_running = false;
+                changeScene(std::make_unique<SceneTitle>());
             }
-            // else if (event.key.keysym.sym == SDLK_d)
-            // { // 测试
-            //     SDL_LogDebug(SDL_LOG_CATEGORY_TEST, "press d");
-            // }
+
+            if (event.key.keysym.scancode == SDL_SCANCODE_J && current_state == SceneState::Title)
+            {
+                changeScene(std::make_unique<SceneMain>());
+            }
             break;
         }
         current_scene->handleEvent(event);

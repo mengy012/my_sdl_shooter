@@ -2,7 +2,7 @@
 #include "../game.h"
 #include "../scene_main_object/enemy_bullet.h"
 #include "../scene_main_object/item_life_restoring.h"
-#include "../scene_main_object/music_manager.h"
+#include "../music_manager/music_manager.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -244,6 +244,11 @@ void SceneMain::render()
 }
 
 void SceneMain::clean() {}
+
+SceneState SceneMain::getState()
+{
+    return state;
+}
 
 void SceneMain::generateEnemy()
 {

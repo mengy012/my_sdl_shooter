@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../game.h"
-#include "./music_manager.h"
+#include "../music_manager/music_manager.h"
 #include "enemy.h"
 #include "item.h"
 #include "player_bullet.h"

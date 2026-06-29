@@ -18,20 +18,27 @@ find_package(SDL2_ttf REQUIRED)
 
 add_subdirectory(src/scene)
 add_subdirectory(src/scene_main_object)
+add_subdirectory(src/music_manager)
 
 # ----------------------------
 # 可执行目标
 # ----------------------------
 add_executable(my_sdl_shooter src/main.cpp src/game.cpp
-    src/background.cpp)
+    src/background.h src/background.cpp)
 
 # ----------------------------
 # 链接库
 # ----------------------------
 target_link_libraries(my_sdl_shooter
     PRIVATE
+        SDL2::SDL2
+        SDL2::SDL2main
+        SDL2_image::SDL2_image
+        SDL2_mixer::SDL2_mixer
+        SDL2_ttf::SDL2_ttf
         scene
         scene_main_object
+        music_manager
 )
 
 # ----------------------------

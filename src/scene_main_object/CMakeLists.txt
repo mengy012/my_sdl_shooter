@@ -8,8 +8,6 @@ add_library(scene_main_object STATIC
     ./item.h
     ./item_life_restoring.h
     ./item_life_restoring.cpp
-    ./music_manager.h
-    ./music_manager.cpp
 
 )
 

@@ -11,3 +11,5 @@ AllowShortFunctionsOnASingleLine: Empty
 PointerAlignment: Left
 
 SortIncludes: true
+
+LambdaBodyIndentation: OuterScope

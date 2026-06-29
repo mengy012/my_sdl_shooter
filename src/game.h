@@ -8,14 +8,6 @@
 #include <memory>
 #include <random>
 
-// 游戏状态枚举
-enum class GameState
-{
-    Title,
-    Main,
-    End
-};
-
 class DeleteWindow // sdl_window删除器
 {
   public:
@@ -112,6 +104,8 @@ class Game
     Game();
     ~Game();
 
+    // 当前游戏状态
+    SceneState current_state{SceneState::Title};
     bool is_running{true};
     std::unique_ptr<Scene> current_scene;                   // 当前场景
     std::unique_ptr<SDL_Window, DeleteWindow> window;       // 窗口

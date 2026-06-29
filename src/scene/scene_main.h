@@ -24,6 +24,7 @@ class SceneMain : public Scene
     void update(double delta_time) override;
     void render() override;
     void clean() override;
+    SceneState getState() override;
 
     void generateEnemy();                     // 生成敌人
     void updateEnemy(double delta_time);      // 更新敌人位置
@@ -41,6 +42,8 @@ class SceneMain : public Scene
     void updateItems(double delta_time);      // 更新物品位置
     void renderItems(SDL_Renderer* renderer); // 渲染物品
   private:
+    SceneState state{SceneState::Main};
+    
     Player player; // 玩家飞机
 
     ButtonPause pauseButton; // 暂停按钮
