@@ -155,13 +155,15 @@ void SceneMain::renderScore(SDL_Renderer* renderer)
     }
 }
 
-void SceneMain::changeSceneDelay(double delta_time, float delay)
+bool SceneMain::changeSceneDelay(double delta_time, float delay)
 {
     game_end_delay += delta_time;
     if (game_end_delay >= delay)
     {
          Game::instance().changeScene(std::make_unique<SceneEnd>());
+         return true; // 场景已切换，调用方必须立即return，不能再访问this
     }
+    return false;
 }
 
 void SceneMain::handleEvent(SDL_Event& event)
@@ -197,7 +199,10 @@ void SceneMain::update(double delta_time)
     }
     if (!player.getIsLive())
     {
-        changeSceneDelay(delta_time);
+        if (changeSceneDelay(delta_time))
+        {
+            return; // 场景已切换，this已销毁，必须立即返回
+        }
         playerExplode();
     }
     else
