@@ -99,5 +99,5 @@ class SceneMain : public Scene
     float game_end_delay{0.0f};
 
     // 切换场景状态，返回true表示场景已切换（调用方必须立即return）
-    bool changeSceneDelay(double delta_time, float delay = 1.5f);
+    bool changeSceneDelay(double delta_time, float delay = 2.5f);
 };
