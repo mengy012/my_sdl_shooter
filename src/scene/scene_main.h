@@ -26,22 +26,27 @@ class SceneMain : public Scene
     void clean() override;
     SceneState getState() override;
 
-    void generateEnemy();                     // 生成敌人
-    void updateEnemy(double delta_time);      // 更新敌人位置
-    void renderEnemy(SDL_Renderer* renderer); // 渲染敌人
-
-    void updateEnemyBullets(double delta_time);      // 更新敌人子弹位置
-    void renderEnemyBullets(SDL_Renderer* renderer); // 渲染敌人子弹
-
-    void enemyExplode(Enemy& enemy);               // 敌人爆炸
-    void playerExplode();                          // 玩家爆炸
-    void updateExplosions(double delta_time);      // 更新爆炸效果
-    void renderExplosions(SDL_Renderer* renderer); // 渲染爆炸效果
-
-    void generateItem(Enemy& enemy);          // 生成物品
-    void updateItems(double delta_time);      // 更新物品位置
-    void renderItems(SDL_Renderer* renderer); // 渲染物品
   private:
+      // 爆炸相关
+    void enemyExplode(Enemy& enemy); // 敌人爆炸
+    void playerExplode();            // 玩家爆炸
+
+    // 生成相关
+    void generateEnemy();            // 生成敌人
+    void generateItem(Enemy& enemy); // 生成物品
+
+    // 更新相关
+    void updateEnemyBullets(double delta_time); // 更新敌人子弹位置
+    void updateExplosions(double delta_time);   // 更新爆炸效果
+    void updateEnemy(double delta_time);        // 更新敌人位置
+    void updateItems(double delta_time);        // 更新物品位置
+
+    // 渲染相关
+    void renderExplosions(SDL_Renderer* renderer);   // 渲染爆炸效果
+    void renderEnemyBullets(SDL_Renderer* renderer); // 渲染敌人子弹
+    void renderEnemy(SDL_Renderer* renderer);        // 渲染敌人
+    void renderItems(SDL_Renderer* renderer);        // 渲染物品
+
     SceneState state{SceneState::Main};
 
     Player player; // 玩家飞机
@@ -89,4 +94,10 @@ class SceneMain : public Scene
 
     // 物品列表
     std::list<std::unique_ptr<Item>> items;
+
+    // 游戏结束延迟计时器
+    float game_end_delay{0.0f};
+
+    // 切换场景状态
+    void changeSceneDelay(double delta_time, float delay = 1.5f);
 };

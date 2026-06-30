@@ -1,8 +1,10 @@
 #include "scene_main.h"
 #include "../game.h"
+#include "../music_manager/music_manager.h"
 #include "../scene_main_object/enemy_bullet.h"
 #include "../scene_main_object/item_life_restoring.h"
-#include "../music_manager/music_manager.h"
+#include "scene_end.h"
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -135,7 +137,7 @@ void SceneMain::renderScore(SDL_Renderer* renderer)
     // 窗口宽度
     int window_width = Game::instance().get_window_width();
     // 窗口高度
-    int window_height = Game::instance().get_window_height();
+    /* int window_height = Game::instance().get_window_height();*/
 
     // 渲染得分
     SDL_Color white{255, 255, 255, 255};
@@ -150,6 +152,15 @@ void SceneMain::renderScore(SDL_Renderer* renderer)
         {
             SDL_RenderCopy(renderer, texture_text.get(), NULL, &text);
         }
+    }
+}
+
+void SceneMain::changeSceneDelay(double delta_time, float delay)
+{
+    game_end_delay += delta_time;
+    if (game_end_delay >= delay)
+    {
+         Game::instance().changeScene(std::make_unique<SceneEnd>());
     }
 }
 
@@ -186,6 +197,7 @@ void SceneMain::update(double delta_time)
     }
     if (!player.getIsLive())
     {
+        changeSceneDelay(delta_time);
         playerExplode();
     }
     else
@@ -194,10 +206,12 @@ void SceneMain::update(double delta_time)
         player.updateBullets(delta_time, enemies);
         player.update(enemies, enemy_bullets, items, score);
 
-        updateEnemy(delta_time);
-        updateEnemyBullets(delta_time);
         updateItems(delta_time);
     }
+
+    updateEnemy(delta_time);
+    updateEnemyBullets(delta_time);
+
     updateExplosions(delta_time);
 }
 
@@ -219,10 +233,11 @@ void SceneMain::render()
     {
         player.renderBullets(Game::instance().getRenderer());
         player.render(Game::instance().getRenderer());
-        renderEnemyBullets(Game::instance().getRenderer());
-        renderEnemy(Game::instance().getRenderer());
         renderItems(Game::instance().getRenderer());
     }
+
+    renderEnemyBullets(Game::instance().getRenderer());
+    renderEnemy(Game::instance().getRenderer());
 
     renderExplosions(Game::instance().getRenderer());
 
@@ -340,17 +355,16 @@ void SceneMain::updateEnemyBullets(double delta_time)
     }
 
     // 移除已飞出屏幕的子弹
-    enemy_bullets.remove_if(
-        [](EnemyBullet& bullet)
-        {
-            auto& game = Game::instance();
-            float bullet_x = bullet.getPosition().x;
-            float bullet_y = bullet.getPosition().y;
-            int bullet_width = bullet.getWidth();
-            int bullet_height = bullet.getHeight();
+    enemy_bullets.remove_if([](EnemyBullet& bullet)
+    {
+        auto& game = Game::instance();
+        float bullet_x = bullet.getPosition().x;
+        float bullet_y = bullet.getPosition().y;
+        int bullet_width = bullet.getWidth();
+        int bullet_height = bullet.getHeight();
 
-            return bullet_y > game.get_window_height() || bullet_y < -static_cast<float>(bullet_height) || bullet_x > game.get_window_width() || bullet_x < -static_cast<float>(bullet_width);
-        });
+        return bullet_y > game.get_window_height() || bullet_y < -static_cast<float>(bullet_height) || bullet_x > game.get_window_width() || bullet_x < -static_cast<float>(bullet_width);
+    });
 }
 
 void SceneMain::renderEnemyBullets(SDL_Renderer* renderer)
