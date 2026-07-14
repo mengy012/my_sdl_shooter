@@ -15,6 +15,29 @@ static int times_of_backspace(const char* c)
     return times;
 }
 
+static int count_utf8_characters(const std::string& str)
+{
+    int count{};
+    if (str.empty())
+    {
+        return count;
+    }
+    int utf8_count{};
+    for (const unsigned char c : str)
+    {
+        if ((c & 0b11000000) == 0b11000000)
+        {
+            ++utf8_count;
+        }
+        else if (!(c & 0b10000000))
+        {
+            ++count;
+        }
+    }
+    count += utf8_count;
+    return count;
+}
+
 namespace test
 {
 void test_times_of_backspace()
@@ -27,9 +50,18 @@ void test_times_of_backspace()
     std::cout << times_of_backspace(str2.c_str() + str2.size() - 1) << std::endl;
     assert(times_of_backspace(str2.c_str() + str2.size() - 1) == 1);
 }
+
+void test_count_utf8_characters()
+{
+    std::string str{"你好_世界_2b"};
+    std::cout << count_utf8_characters(str) << std::endl;
+    // assert(count_utf8_characters(str) == 2);
+}
+    
 } // namespace test
 
 int main()
 {
     // test::test_times_of_backspace();
+    test::test_count_utf8_characters();
 }

@@ -24,4 +24,7 @@ class SceneEnd : public Scene
 
     // 输入名称
     std::string input_name;
+
+    // 输入名称最大字符数
+    const int input_max{10};
 };

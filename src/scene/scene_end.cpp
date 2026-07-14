@@ -65,6 +65,29 @@ static void removeUTF8_character(std::string& str)
     }
 }
 
+static int count_utf8_characters(const std::string& str)
+{
+    int count{};
+    if (str.empty())
+    {
+        return count;
+    }
+    int utf8_count{};
+    for (const unsigned char c : str)
+    {
+        if ((c & 0b11000000) == 0b11000000)
+        {
+            ++utf8_count;
+        }
+        else if (!(c & 0b10000000))
+        {
+            ++count;
+        }
+    }
+    count += utf8_count;
+    return count;
+}
+
 SceneEnd::SceneEnd() {}
 
 SceneEnd::~SceneEnd()
@@ -105,6 +128,12 @@ void SceneEnd::handleEvent(SDL_Event& event)
         if (event.type == SDL_TEXTINPUT)
         {
             input_name += event.text.text;
+
+            int input_name_length = count_utf8_characters(input_name);
+            for (int i = 0; i < input_name_length - input_max; ++i)
+            {
+                removeUTF8_character(input_name);
+            }
         }
 
         if (event.type == SDL_KEYDOWN)
