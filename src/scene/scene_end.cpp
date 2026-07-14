@@ -43,6 +43,28 @@ static void renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view 
     SDL_RenderCopy(renderer, textTexture.get(), nullptr, &renderQuad);
 }
 
+static int times_of_backspace(const char* c)
+{
+    int times = 1;
+
+    while ((static_cast<unsigned char>(*c) & 0b11000000) == 0b10000000)
+    {
+        ++times;
+        --c;
+    }
+
+    return times;
+}
+
+static void removeUTF8_character(std::string& str)
+{
+    int bytes = times_of_backspace(str.c_str() + str.size() - 1);
+    for (int i = 0; i < bytes; ++i)
+    {
+        str.pop_back();
+    }
+}
+
 SceneEnd::SceneEnd() {}
 
 SceneEnd::~SceneEnd()
@@ -85,19 +107,22 @@ void SceneEnd::handleEvent(SDL_Event& event)
             input_name += event.text.text;
         }
 
-        // 处理回车键事件
-        if (event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+        if (event.type == SDL_KEYDOWN)
         {
-            is_input_mode = false;
-            SDL_StopTextInput();
-        }
-
-        // 处理退格事件
-        if (event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
-        {
-            if (!input_name.empty())
+            // 处理回车键事件
+            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN)
             {
-                input_name.pop_back();
+                is_input_mode = false;
+                SDL_StopTextInput();
+            }
+
+            // 处理退格事件
+            if (event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
+            {
+                if (!input_name.empty())
+                {
+                    removeUTF8_character(input_name);
+                }
             }
         }
     }
