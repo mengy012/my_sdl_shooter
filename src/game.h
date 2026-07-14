@@ -107,6 +107,12 @@ class Game
     Mix_Chunk* getChunk(ChunkType type);
     // 获取背景音乐
     Mix_Music* getBackgroundMusic(MusicType type);
+    // 获取最终游戏得分
+    int getFinalScore() const;
+
+    // sets
+    // 设置最终游戏得分
+    void setFinalScore(int score);
 
   private:
     Game();
@@ -138,4 +144,7 @@ class Game
 
     // 音乐管理器
     MusicManager music_manager_;
+
+    // 最终游戏得分
+    int final_score_{0};
 };

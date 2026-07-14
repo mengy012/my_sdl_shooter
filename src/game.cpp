@@ -10,6 +10,11 @@
 
 using namespace std::chrono_literals;
 
+void Game::setFinalScore(int score) {
+    
+    final_score_ = score;
+}
+
 Game::Game() = default;
 
 Game& Game::instance()
@@ -227,6 +232,11 @@ Mix_Chunk* Game::getChunk(ChunkType type)
 Mix_Music* Game::getBackgroundMusic(MusicType type)
 {
     return music_manager_.getBackgroundMusic(type);
+}
+
+int Game::getFinalScore() const
+{
+    return final_score_;
 }
 
 // 资源已使用智能指针管理,可能删除
