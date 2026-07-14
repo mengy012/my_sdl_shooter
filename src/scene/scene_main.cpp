@@ -16,6 +16,9 @@ SceneMain::SceneMain() {}
 
 SceneMain::~SceneMain()
 {
+    // 游戏结束时,设置最终游戏得分
+    Game::instance().setFinalScore(score);
+
     Mix_HaltMusic();
 }
 
