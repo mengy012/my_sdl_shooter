@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene.h"
+#include <string>
 
 class SceneEnd : public Scene
 {
@@ -17,4 +18,10 @@ class SceneEnd : public Scene
 
   private:
     SceneState state{SceneState::End};
+
+    // 输入模式开关
+    bool is_input_mode{false};
+
+    // 输入名称
+    std::string input_name;
 };

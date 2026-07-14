@@ -10,8 +10,9 @@
 
 using namespace std::chrono_literals;
 
-void Game::setFinalScore(int score) {
-    
+void Game::setFinalScore(int score)
+{
+
     final_score_ = score;
 }
 
@@ -249,6 +250,8 @@ Game& Game::init()
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl init failed %s\n", SDL_GetError());
         is_running = false;
     }
+    SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
+
     // 创建窗口
     window.reset(SDL_CreateWindow("SDL_Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_ALLOW_HIGHDPI));
     if (!window)
