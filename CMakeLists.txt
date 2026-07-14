@@ -27,6 +27,9 @@ add_subdirectory(src/font_manager)
 add_executable(my_sdl_shooter src/main.cpp src/game.cpp
     src/background.h src/background.cpp)
 
+
+add_executable(test src/tests/test.cpp)
+
 # ----------------------------
 # 链接库
 # ----------------------------
