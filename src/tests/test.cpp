@@ -25,11 +25,22 @@ static int count_utf8_characters(const std::string& str)
     int utf8_count{};
     for (const unsigned char c : str)
     {
+        /*
         if ((c & 0b11000000) == 0b11000000)
         {
             ++utf8_count;
         }
         else if (!(c & 0b10000000))
+        {
+            ++count;
+        }
+        */
+
+        if ((c >> 6) == 0b11)
+        {
+            ++utf8_count;
+        }
+        else if (!(c >> 7))
         {
             ++count;
         }
@@ -57,7 +68,7 @@ void test_count_utf8_characters()
     std::cout << count_utf8_characters(str) << std::endl;
     // assert(count_utf8_characters(str) == 2);
 }
-    
+
 } // namespace test
 
 int main()
