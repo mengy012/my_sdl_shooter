@@ -1,6 +1,8 @@
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <string>
+#include <thread>
 
 static int times_of_backspace(const char* c)
 {
@@ -69,10 +71,23 @@ void test_count_utf8_characters()
     // assert(count_utf8_characters(str) == 2);
 }
 
+void test_construct_duration()
+{
+    using s_clock = std::chrono::steady_clock;
+    using s_time_point = s_clock::time_point;
+
+    s_time_point start = s_clock::now();
+    std::this_thread::sleep_for(std::chrono::duration<float>(1.5f));
+    s_time_point end = s_clock::now();
+
+    std::cout << std::fixed << std::chrono::duration<float>(end - start).count() << std::endl;
+}
+
 } // namespace test
 
 int main()
 {
     // test::test_times_of_backspace();
     test::test_count_utf8_characters();
+    test::test_construct_duration();
 }

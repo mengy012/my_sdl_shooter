@@ -96,7 +96,7 @@ class SceneMain : public Scene
     std::list<std::unique_ptr<Item>> items;
 
     // 游戏结束延迟计时器
-    float game_end_delay{0.0f};
+    double game_end_delay{0.0f};
 
     // 切换场景状态，返回true表示场景已切换（调用方必须立即return）
     bool changeSceneDelay(double delta_time, float delay = 2.5f);
