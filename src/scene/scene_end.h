@@ -27,4 +27,10 @@ class SceneEnd : public Scene
 
     // 输入名称最大字符数
     const int input_max{10};
+
+    // 输入字符时光标闪烁间隔
+    double cursor_duration{0.5};
+
+    // 渲染下划线“_”
+    void render_cursor(float x, float y, bool is_flickering);
 };

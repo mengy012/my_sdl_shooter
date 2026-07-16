@@ -1,9 +1,12 @@
 #include "scene_end.h"
 #include "../game.h"
+#include <SDL.h>
+#include <chrono>
 #include <memory>
 #include <string>
 
-static void renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view text, SDL_Color textColor, float posY, float fontSize, bool is_input_mode)
+// ，返回当前渲染框右上角坐标
+static SDL_FPoint renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view text, SDL_Color textColor, float posY, float fontSize, bool is_input_mode)
 {
     // 创建文本表面
     std::unique_ptr<SDL_Surface, DeleteSurface> textSurface(TTF_RenderUTF8_Solid(font, text.data(), textColor));
@@ -11,7 +14,7 @@ static void renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view 
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_rendertext_solid failed %s\n", SDL_GetError());
         Game::instance().getIsRunning() = false;
-        return;
+        return SDL_FPoint{};
     }
 
     // 创建纹理
@@ -20,7 +23,7 @@ static void renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view 
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl_createtexturefromsurface failed %s\n", SDL_GetError());
         Game::instance().getIsRunning() = false;
-        return;
+        return SDL_FPoint{};
     }
 
     // 获取纹理宽高
@@ -41,6 +44,9 @@ static void renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view 
 
     // 渲染纹理
     SDL_RenderCopy(renderer, textTexture.get(), nullptr, &renderQuad);
+
+    // 返回渲染框右上角坐标
+    return SDL_FPoint{static_cast<float>(renderQuad.x + renderQuad.w), static_cast<float>(renderQuad.y)};
 }
 
 static int times_of_backspace(const char* c)
@@ -114,7 +120,7 @@ void SceneEnd::init()
     else
     {
         is_input_mode = true;
-        SDL_Rect input_rect{0, 0, 0, 0};
+        SDL_Rect input_rect{200, 640, 0, 0};
         SDL_SetTextInputRect(&input_rect);
     }
 }
@@ -180,7 +186,13 @@ void SceneEnd::render()
         // 输入名称
         if (!input_name.empty())
         {
-            renderText(renderer, font, input_name, textColor, 0.7f, 0.5f, true);
+            SDL_FPoint pos = renderText(renderer, font, input_name, textColor, 0.7f, 0.5f, true);
+            render_cursor(pos.x, pos.y, true);
+        }
+        else
+        {
+            // SDL_FPoint pos = renderText(renderer, font, "_", textColor, 0.7f, 0.5f, true);
+            render_cursor(292, 544, true);
         }
     }
 }
@@ -190,4 +202,59 @@ void SceneEnd::clean() {}
 SceneState SceneEnd::getState()
 {
     return state;
+}
+
+void SceneEnd::render_cursor(float x, float y, bool is_flickering)
+{
+    auto renderer = Game::instance().getRenderer();
+    auto font = Game::instance().getFont(FontType::Title);
+    auto textColor = SDL_Color{255, 255, 255, 255};
+
+    std::string text = "_";
+
+    // 创建文本表面
+    std::unique_ptr<SDL_Surface, DeleteSurface> textSurface(TTF_RenderUTF8_Solid(font, text.data(), textColor));
+    if (!textSurface)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ttf_rendertext_solid failed %s\n", SDL_GetError());
+        Game::instance().getIsRunning() = false;
+        return;
+    }
+
+    // 创建纹理
+    std::unique_ptr<SDL_Texture, DeleteTexture> textTexture(SDL_CreateTextureFromSurface(renderer, textSurface.get()));
+    if (!textTexture)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl_createtexturefromsurface failed %s\n", SDL_GetError());
+        Game::instance().getIsRunning() = false;
+        return;
+    }
+
+    // 获取纹理宽高
+    int textWidth = textSurface->w * 0.5f;
+    int textHeight = textSurface->h * 0.5f;
+
+    // 设置渲染目标为窗口指定位置
+    int windowWidth = Game::instance().get_window_width();
+    int windowHeight = Game::instance().get_window_height();
+    SDL_Rect renderQuad = {x, y, textWidth, textHeight};
+
+    if (is_flickering)
+    {
+        static auto last = std::chrono::steady_clock::now();
+        auto now = std::chrono::steady_clock::now();
+        auto duration = std::chrono::duration<double>(now - last).count();
+        if (duration >= 1.f)
+        {
+            last = now;
+        }
+        if (duration >= cursor_duration)
+        {
+            SDL_RenderCopy(renderer, textTexture.get(), NULL, &renderQuad);
+        }
+    }
+    else
+    {
+        SDL_RenderCopy(renderer, textTexture.get(), NULL, &renderQuad);
+    }
 }
