@@ -71,16 +71,22 @@ void test_count_utf8_characters()
     // assert(count_utf8_characters(str) == 2);
 }
 
+namespace time
+{
+using s_clock = std::chrono::steady_clock;
+using s_time_point = s_clock::time_point;
+using float_secends = std::chrono::duration<float>;
+
+} // namespace time
+
 void test_construct_duration()
 {
-    using s_clock = std::chrono::steady_clock;
-    using s_time_point = s_clock::time_point;
 
-    s_time_point start = s_clock::now();
-    std::this_thread::sleep_for(std::chrono::duration<float>(1.5f));
-    s_time_point end = s_clock::now();
+    time::s_time_point start = time::s_clock::now();
+    std::this_thread::sleep_for(time::float_secends(1.5f));
+    time::s_time_point end = time::s_clock::now();
 
-    std::cout << std::fixed << std::chrono::duration<float>(end - start).count() << std::endl;
+    std::cout << std::fixed << time::float_secends(end - start).count() << std::endl;
 }
 
 } // namespace test
