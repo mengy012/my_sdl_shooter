@@ -1,12 +1,14 @@
 #include "scene_end.h"
 #include "../game.h"
+#include "./scene_main.h"
 #include <SDL.h>
 #include <chrono>
 #include <memory>
 #include <string>
 
 // ，返回当前渲染框右上角坐标
-static SDL_FPoint renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view text, SDL_Color textColor, float posY, float fontSize, bool is_input_mode)
+static SDL_FPoint renderText(SDL_Renderer* renderer, TTF_Font* font, std::string_view text, SDL_Color textColor, float posY, float fontSize, bool is_input_mode, bool is_left_align = true,
+                             float x = NAN)
 {
     // 创建文本表面
     std::unique_ptr<SDL_Surface, DeleteSurface> textSurface(TTF_RenderUTF8_Solid(font, text.data(), textColor));
@@ -33,7 +35,20 @@ static SDL_FPoint renderText(SDL_Renderer* renderer, TTF_Font* font, std::string
     // 设置渲染目标为窗口指定位置
     int windowWidth = Game::instance().get_window_width();
     int windowHeight = Game::instance().get_window_height();
-    SDL_Rect renderQuad = {windowWidth / 2 - textWidth / 2, windowHeight * posY - textHeight / 2, textWidth, textHeight};
+    SDL_Rect renderQuad{};
+    if (std::isnan(x))
+    {
+        renderQuad = {static_cast<int>(windowWidth / 2.f - textWidth / 2.f), static_cast<int>(windowHeight * posY - textHeight / 2.f), textWidth, textHeight};
+    }
+    else
+    {
+        renderQuad = {static_cast<int>(x), static_cast<int>(windowHeight * posY - textHeight / 2.f), textWidth, textHeight};
+    }
+
+    if (!is_left_align)
+    {
+        renderQuad.x = windowWidth - textWidth - 125;
+    }
 
     // 输入模式下,调用SDL_SetTextInputRect设置输入区域
     if (is_input_mode)
@@ -149,6 +164,12 @@ void SceneEnd::handleEvent(SDL_Event& event)
             {
                 is_input_mode = false;
                 SDL_StopTextInput();
+                if (input_name.empty())
+                {
+                    input_name = "Player";
+                }
+                Game::instance().addLeaderboardEntry(Game::instance().getFinalScore(), input_name);
+                is_leaderboard = true;
             }
 
             // 处理退格事件
@@ -163,6 +184,15 @@ void SceneEnd::handleEvent(SDL_Event& event)
     }
     else
     {
+        // 处理J键事件
+        if (is_leaderboard)
+        {
+            if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_J)
+            {
+                Game::instance().changeScene(std::make_unique<SceneMain>());
+                return;
+            }
+        }
     }
 }
 
@@ -204,6 +234,35 @@ void SceneEnd::render()
                 renderText(renderer, font, "_", textColor, 0.7f, 0.5f, true);
             }
             // render_cursor(292, 544, true);
+        }
+    }
+    else if (is_leaderboard)
+    {
+        // "排行榜"
+        renderText(renderer, font, "排行榜", textColor, 0.1f, 1.f, false);
+
+        // 渲染排行榜排名
+        if (!Game::instance().getLeaderboardEntries().empty())
+        {
+            int rank = 1;
+            for (const auto& [score, name] : Game::instance().getLeaderboardEntries())
+            {
+                std::string rank_text = std::to_string(rank) + ". " + name;
+                renderText(renderer, font, rank_text, textColor, 0.25f + rank * 0.05f, 0.5f, false, true, 75.f);
+                std::string score_text = std::to_string(score);
+                renderText(renderer, font, score_text, textColor, 0.25f + rank * 0.05f, 0.5f, false, false);
+                rank++;
+            }
+        }
+        else
+        {
+            renderText(renderer, font, "排行榜为空", textColor, 0.4f, 0.5f, false);
+        }
+
+        // "按J重新开始游戏"
+        if (cursor_timer >= 0.4f)
+        {
+            renderText(renderer, font, "按J重新开始游戏", textColor, 0.8f, 0.5f, false);
         }
     }
 }

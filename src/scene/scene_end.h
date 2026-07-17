@@ -36,4 +36,7 @@ class SceneEnd : public Scene
 
     // 渲染下划线“_”
     void render_cursor(float x, float y, bool is_flickering);
+
+    // 是否处于排行榜界面
+    bool is_leaderboard{false};
 };

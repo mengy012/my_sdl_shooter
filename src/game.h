@@ -9,6 +9,8 @@
 #include <chrono>
 #include <memory>
 #include <random>
+#include <string>
+#include <map>
 
 class DeleteWindow // sdl_window删除器
 {
@@ -109,10 +111,15 @@ class Game
     Mix_Music* getBackgroundMusic(MusicType type);
     // 获取最终游戏得分
     int getFinalScore() const;
+    // 获取排行榜
+    const std::multimap<int, std::string, std::greater<int>>& getLeaderboardEntries() const;
 
     // sets
     // 设置最终游戏得分
     void setFinalScore(int score);
+
+    // 添加排行榜条目
+    void addLeaderboardEntry(int score, std::string name);
 
   private:
     Game();
@@ -147,4 +154,7 @@ class Game
 
     // 最终游戏得分
     int final_score_{0};
+
+    // 游戏排行榜
+    std::multimap<int, std::string, std::greater<int>> leaderboard_;
 };

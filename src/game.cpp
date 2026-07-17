@@ -16,6 +16,15 @@ void Game::setFinalScore(int score)
     final_score_ = score;
 }
 
+void Game::addLeaderboardEntry(int score, std::string name) 
+{
+    leaderboard_.emplace(score, name);
+    if (leaderboard_.size() > 8)
+    {
+        leaderboard_.erase(--leaderboard_.end());
+    }
+}
+
 Game::Game() = default;
 
 Game& Game::instance()
@@ -145,6 +154,10 @@ void Game::handleEvent(SDL_Event& event)
             {
                 is_running = false;
             }
+            else if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE && current_state == SceneState::End)
+            {
+                changeScene(std::make_unique<SceneTitle>());
+            }
             break;
         }
         current_scene->handleEvent(event);
@@ -238,6 +251,11 @@ Mix_Music* Game::getBackgroundMusic(MusicType type)
 int Game::getFinalScore() const
 {
     return final_score_;
+}
+
+const std::multimap<int, std::string, std::greater<int>>& Game::getLeaderboardEntries() const
+{
+    return leaderboard_;
 }
 
 // 资源已使用智能指针管理,可能删除
