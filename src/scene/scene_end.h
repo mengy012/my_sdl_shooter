@@ -28,8 +28,11 @@ class SceneEnd : public Scene
     // 输入名称最大字符数
     const int input_max{10};
 
-    // 输入字符时光标闪烁间隔
-    double cursor_duration{0.5};
+    // 输入字符时光标闪烁时间阈值（计时器大于等于该值时，渲染下划线“_”）
+    double display_threshold{0.5};
+
+    // 闪烁控制计时器
+    double cursor_timer{0.0};
 
     // 渲染下划线“_”
     void render_cursor(float x, float y, bool is_flickering);

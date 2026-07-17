@@ -166,7 +166,15 @@ void SceneEnd::handleEvent(SDL_Event& event)
     }
 }
 
-void SceneEnd::update(double delta_time) {}
+void SceneEnd::update(double delta_time)
+{
+    cursor_timer += delta_time;
+    // 控制计时器在0 - 1s之间
+    if (cursor_timer >= 1.f)
+    {
+        cursor_timer = 0.f;
+    }
+}
 
 void SceneEnd::render()
 {
@@ -191,8 +199,11 @@ void SceneEnd::render()
         }
         else
         {
-            // SDL_FPoint pos = renderText(renderer, font, "_", textColor, 0.7f, 0.5f, true);
-            render_cursor(292, 544, true);
+            if (cursor_timer >= display_threshold)
+            {
+                renderText(renderer, font, "_", textColor, 0.7f, 0.5f, true);
+            }
+            // render_cursor(292, 544, true);
         }
     }
 }
@@ -241,14 +252,14 @@ void SceneEnd::render_cursor(float x, float y, bool is_flickering)
 
     if (is_flickering)
     {
-        static auto last = std::chrono::steady_clock::now();
-        auto now = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration<double>(now - last).count();
-        if (duration >= 1.f)
-        {
-            last = now;
-        }
-        if (duration >= cursor_duration)
+        // static auto last = std::chrono::steady_clock::now();
+        // auto now = std::chrono::steady_clock::now();
+        // auto duration = std::chrono::duration<double>(now - last).count();
+        //  if (duration >= 1.f)
+        //  {
+        //    last = now;
+        //  }
+        if (cursor_timer >= display_threshold)
         {
             SDL_RenderCopy(renderer, textTexture.get(), NULL, &renderQuad);
         }
