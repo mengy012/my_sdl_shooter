@@ -1,5 +1,6 @@
 #include <cassert>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -89,11 +90,29 @@ void test_construct_duration()
     std::cout << std::fixed << time::float_secends(end - start).count() << std::endl;
 }
 
+void test_file_stream(std::string file_name)
+{
+    std::fstream fs(file_name, std::ios::app | std::ios::in);
+    if (fs)
+    {
+        fs << "hello world" << std::endl;
+    }
+    fs.seekg(0, std::ios_base::end);
+    std::streamsize size = fs.tellg();
+    std::cout << "file size: " << size << std::endl;
+
+    std::string line(32, '\0');
+    fs.seekg(0, std::ios_base::beg);
+    fs.getline(line.data(), line.size());
+    std::cout << line << std::endl;
+}
+
 } // namespace test
 
 int main()
 {
     // test::test_times_of_backspace();
-    test::test_count_utf8_characters();
-    test::test_construct_duration();
+    // test::test_count_utf8_characters();
+    // test::test_construct_duration();
+    test::test_file_stream("test.txt");
 }
