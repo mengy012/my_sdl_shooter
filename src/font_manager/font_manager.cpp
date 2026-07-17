@@ -8,6 +8,7 @@ FontManager::~FontManager()
     for (auto& [font_type, font] : fonts_)
     {
         TTF_CloseFont(font);
+        font = nullptr;
     }
 }
 
@@ -19,6 +20,7 @@ TTF_Font* FontManager::getFont(FontType font_type)
     if (it != fonts_.end())
     {
         font = it->second;
+        return font;
     }
 
     switch (font_type)

@@ -41,6 +41,11 @@ Game::~Game()
     renderer.reset();
     window.reset();
 
+    far_stars_ = Background();
+    near_stars_ = Background();
+    music_manager_.~MusicManager();
+    font_manager_.~FontManager();
+
     IMG_Quit();
     Mix_CloseAudio();
     Mix_Quit();

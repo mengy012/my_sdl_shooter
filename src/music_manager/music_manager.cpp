@@ -9,6 +9,7 @@ MusicManager::~MusicManager()
         if (pair.second)
         {
             Mix_FreeMusic(pair.second);
+            pair.second = nullptr;
         }
     }
     for (auto& pair : chunks_)
@@ -16,6 +17,7 @@ MusicManager::~MusicManager()
         if (pair.second)
         {
             Mix_FreeChunk(pair.second);
+            pair.second = nullptr;
         }
     }
 }
