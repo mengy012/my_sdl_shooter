@@ -107,6 +107,19 @@ void test_file_stream(std::string file_name)
     std::cout << line << std::endl;
 }
 
+void test_string_substr()
+{
+    std::string line("name: Alice, score: 129920");
+    std::streamsize pos = line.find_first_of(' ', 0);
+    std::streamsize pos1 = line.find_first_of(',', 0);
+    std::string name(line.substr(pos + 1, pos1 - pos - 1));
+
+    pos = line.find_first_of(' ', pos1 + 2);
+    std::string score(line.substr(pos + 1));
+
+    std::cout << "name: " << name << " " << "score: " << score << std::endl;
+}
+
 } // namespace test
 
 int main()
@@ -114,5 +127,6 @@ int main()
     // test::test_times_of_backspace();
     // test::test_count_utf8_characters();
     // test::test_construct_duration();
-    test::test_file_stream("test.txt");
+    // test::test_file_stream("test.txt");
+    test::test_string_substr();
 }
