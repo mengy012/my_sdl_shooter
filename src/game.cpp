@@ -5,6 +5,10 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <charconv>
+#include <fstream>
+#include <functional>
+#include <sstream>
 #include <string>
 #include <thread>
 
@@ -16,7 +20,7 @@ void Game::setFinalScore(int score)
     final_score_ = score;
 }
 
-void Game::addLeaderboardEntry(int score, std::string name) 
+void Game::addLeaderboardEntry(int score, std::string name)
 {
     leaderboard_.emplace(score, name);
     if (leaderboard_.size() > 8)
@@ -35,6 +39,9 @@ Game& Game::instance()
 
 Game::~Game()
 {
+    // 保存排行榜
+    saveLeaderboard();
+
     // sdl资源释放一定要在sdl_quit之前,否则可能会崩溃(坑死我了😡)
     current_scene.reset();
     // font.reset();
@@ -51,6 +58,74 @@ Game::~Game()
     Mix_Quit();
     TTF_Quit();
     SDL_Quit();
+}
+
+void Game::loadLeaderboard()
+{
+    std::hash<std::string> hasher;
+    std::ifstream file("../../assets/leaderboard.data", std::ios::binary);
+    if (file)
+    {
+        file.seekg(0, std::ios::end);
+        std::streamsize file_size = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        std::string content(file_size, 0);
+        file.read(content.data(), file_size);
+
+        std::string last_hash_text = content.substr(content.find('*') + 1);
+        size_t last_hash{};
+        std::from_chars(last_hash_text.c_str(), last_hash_text.c_str() + last_hash_text.size(), last_hash);
+        size_t now_hash = hasher(content.substr(0, content.find('*')));
+
+        if (last_hash == now_hash)
+        {
+            SDL_Log("hash ok");
+            std::istringstream iss(content.substr(0, content.find('*')));
+            // std::cout << content.substr(0, content.find('*')) << std::endl;
+            int score{};
+            std::string name;
+            while (iss >> score >> name)
+            {
+                // std::cout << score << name << std::endl;
+                addLeaderboardEntry(score, name);
+            }
+        }
+        // std::cout << last_hash << '\n' << now_hash << std::endl;
+        // std::cout << content << std::endl;
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load leaderboard file: %s", SDL_GetError());
+    }
+}
+
+void Game::saveLeaderboard()
+{
+    std::ofstream file("../../assets/leaderboard.data", std::ios::binary);
+    if (file)
+    {
+        if (leaderboard_.empty())
+        {
+            return;
+        }
+
+        std::ostringstream oss;
+        for (const auto& [score, name] : leaderboard_)
+        {
+            oss << score << " " << name << std::endl;
+        }
+
+        std::string context(oss.str());
+        std::hash<std::string> hasher;
+        std::string hash = std::to_string(hasher(context));
+
+        file << context << "*" << hash;
+    }
+    else
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to save leaderboard file: %s", SDL_GetError());
+    }
 }
 
 void Game::run()
@@ -332,6 +407,9 @@ Game& Game::init()
     // 初始化背景
     far_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-B.png"), 20.f);
     near_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-A.png"));
+
+    // 加载排行榜
+    loadLeaderboard();
 
     return *this;
 }

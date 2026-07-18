@@ -9,6 +9,7 @@ build/
 *.exe
 *.ilk
 *.pdb
+*.data
 
 # 其他
 git流程.txt

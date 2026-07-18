@@ -164,6 +164,15 @@ void SceneEnd::handleEvent(SDL_Event& event)
             {
                 is_input_mode = false;
                 SDL_StopTextInput();
+                if (!input_name.empty())
+                {
+                    size_t pos = input_name.find('*');
+                    if (pos != std::string::npos)
+                    {
+                        input_name.erase(pos, 1);
+                    }
+                }
+
                 if (input_name.empty())
                 {
                     input_name = "Player";

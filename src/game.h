@@ -1,16 +1,16 @@
 #pragma once
 
 #include "./background.h"
-#include "./music_manager/music_manager.h"
 #include "./font_manager/font_manager.h"
+#include "./music_manager/music_manager.h"
 #include "./scene/scene.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <chrono>
+#include <map>
 #include <memory>
 #include <random>
 #include <string>
-#include <map>
 
 class DeleteWindow // sdl_window删除器
 {
@@ -104,7 +104,7 @@ class Game
     // 获取0-1之间的随机浮点数
     float getRandomFloat() const noexcept;
 
-    // gets 
+    // gets
     // 获取音效
     Mix_Chunk* getChunk(ChunkType type);
     // 获取背景音乐
@@ -131,7 +131,7 @@ class Game
     std::unique_ptr<Scene> current_scene;                   // 当前场景
     std::unique_ptr<SDL_Window, DeleteWindow> window;       // 窗口
     std::unique_ptr<SDL_Renderer, DeleteRenderer> renderer; // 渲染器
-    FontManager font_manager_;                             // 字体管理器
+    FontManager font_manager_;                              // 字体管理器
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
 
@@ -157,4 +157,9 @@ class Game
 
     // 游戏排行榜
     std::multimap<int, std::string, std::greater<int>> leaderboard_;
+
+    // 加载排行榜
+    void loadLeaderboard();
+    // 保存排行榜
+    void saveLeaderboard();
 };
