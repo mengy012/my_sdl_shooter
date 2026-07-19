@@ -1,6 +1,7 @@
 # 文件夹
 build/
 .vscode/
+dist/
 
 # 文件
 *.obj
