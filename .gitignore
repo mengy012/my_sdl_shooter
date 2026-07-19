@@ -10,6 +10,7 @@ build/
 *.ilk
 *.pdb
 *.data
+*.ini
 
 # 其他
 git流程.txt
