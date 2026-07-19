@@ -128,6 +128,7 @@ class Game
     // 当前游戏状态
     SceneState current_state{SceneState::Title};
     bool is_running{true};
+    bool is_fullscreen{false};                              // 游戏是否全屏
     std::unique_ptr<Scene> current_scene;                   // 当前场景
     std::unique_ptr<SDL_Window, DeleteWindow> window;       // 窗口
     std::unique_ptr<SDL_Renderer, DeleteRenderer> renderer; // 渲染器

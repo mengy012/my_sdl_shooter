@@ -238,6 +238,26 @@ void Game::handleEvent(SDL_Event& event)
             {
                 changeScene(std::make_unique<SceneTitle>());
             }
+
+            if (event.key.keysym.scancode == SDL_SCANCODE_F4)
+            {
+                if (is_fullscreen)
+                {
+                    // 退出全屏
+                    if (SDL_SetWindowFullscreen(window.get(), 0) == 0)
+                    {
+                        is_fullscreen = false;
+                    }
+                }
+                else
+                {
+                    // 进入全屏
+                    if (SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+                    {
+                        is_fullscreen = true;
+                    }
+                }
+            }
             break;
         }
         current_scene->handleEvent(event);
@@ -364,6 +384,9 @@ Game& Game::init()
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl renderer init failed %s\n", SDL_GetError());
         is_running = false;
     }
+
+    // 设置渲染器逻辑尺寸,使游戏画面在不同分辨率下保持相同的显示比例
+    SDL_RenderSetLogicalSize(renderer.get(), window_width, window_height);
 
     // 初始化sdl_image
     if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) != (IMG_INIT_JPG | IMG_INIT_PNG))
