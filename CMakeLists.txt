@@ -47,6 +47,11 @@ target_link_libraries(my_sdl_shooter
         font_manager
 )
 
+# release 去除黑框
+set_target_properties(my_sdl_shooter PROPERTIES
+    WIN32_EXECUTABLE "$<CONFIG:Release>"
+)
+
 # ----------------------------
 # 编译选项（按 编译器 + 配置 区分）
 # ----------------------------
