@@ -28,7 +28,8 @@ add_executable(my_sdl_shooter src/main.cpp src/game.cpp
     src/background.h src/background.cpp)
 
 
-add_executable(test src/tests/test.cpp)
+add_executable(test)
+target_sources(test PRIVATE src/tests/test.cpp)
 
 # ----------------------------
 # 链接库
