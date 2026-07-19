@@ -25,7 +25,7 @@ if (MSVC)
     target_compile_options(scene_main_object PRIVATE
         /W4 /utf-8
         $<$<CONFIG:Debug>:/Od /Zi>
-        $<$<CONFIG:Release>:/O2>
+        $<$<CONFIG:Release>:/O2 /MT>
     )
 else()
     target_compile_options(scene_main_object PRIVATE

@@ -16,7 +16,7 @@ if (MSVC)
     target_compile_options(music_manager PRIVATE
         /W4 /utf-8
         $<$<CONFIG:Debug>:/Od /Zi>
-        $<$<CONFIG:Release>:/O2>
+        $<$<CONFIG:Release>:/O2 /MT>
     )
 else()
     target_compile_options(music_manager PRIVATE
