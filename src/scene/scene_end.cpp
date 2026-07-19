@@ -2,6 +2,7 @@
 #include "../game.h"
 #include "./scene_main.h"
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -113,6 +114,12 @@ SceneEnd::SceneEnd() {}
 
 SceneEnd::~SceneEnd()
 {
+    // 停止背景音乐
+    if (background_music_)
+    {
+        Mix_HaltMusic();
+    }
+
     if (SDL_IsTextInputActive())
     {
         SDL_StopTextInput();
@@ -121,6 +128,13 @@ SceneEnd::~SceneEnd()
 
 void SceneEnd::init()
 {
+    // 初始化背景音乐
+    background_music_ = Game::instance().getBackgroundMusic(MusicType::Title);
+    if (background_music_)
+    {
+        Mix_PlayMusic(background_music_, -1);
+    }
+
     // 初始化输入模式
     if (!SDL_IsTextInputActive())
     {

@@ -2,6 +2,7 @@
 
 #include "scene.h"
 #include <string>
+#include <SDL_mixer.h>
 
 class SceneEnd : public Scene
 {
@@ -39,4 +40,7 @@ class SceneEnd : public Scene
 
     // 是否处于排行榜界面
     bool is_leaderboard{false};
+
+    // 背景音乐
+    Mix_Music* background_music_{nullptr};
 };

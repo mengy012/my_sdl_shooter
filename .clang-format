@@ -10,6 +10,6 @@ AllowShortFunctionsOnASingleLine: Empty
 
 PointerAlignment: Left
 
-SortIncludes: true
+SortIncludes: false
 
 LambdaBodyIndentation: OuterScope
