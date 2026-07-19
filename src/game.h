@@ -131,7 +131,7 @@ class Game
     std::unique_ptr<Scene> current_scene;                   // 当前场景
     std::unique_ptr<SDL_Window, DeleteWindow> window;       // 窗口
     std::unique_ptr<SDL_Renderer, DeleteRenderer> renderer; // 渲染器
-    FontManager font_manager_;                              // 字体管理器
+    FontManager* font_manager_;                              // 字体管理器
     int window_width = 600;                                 // 窗口宽
     int window_height = 800;                                // 窗口高
 
@@ -145,12 +145,12 @@ class Game
     std::random_device::result_type random_seed{std::random_device{}()}; // 随机数种子
 
     // 远处背景
-    Background far_stars_;
+    Background* far_stars_;
     // 近处背景
-    Background near_stars_;
+    Background* near_stars_;
 
     // 音乐管理器
-    MusicManager music_manager_;
+    MusicManager* music_manager_;
 
     // 最终游戏得分
     int final_score_{0};

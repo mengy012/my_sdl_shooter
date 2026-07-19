@@ -48,10 +48,10 @@ Game::~Game()
     renderer.reset();
     window.reset();
 
-    far_stars_ = Background();
-    near_stars_ = Background();
-    music_manager_.~MusicManager();
-    font_manager_.~FontManager();
+    // far_stars_ = Background();
+    // near_stars_ = Background();
+    // music_manager_.~MusicManager();
+    // font_manager_.~FontManager();
 
     IMG_Quit();
     Mix_CloseAudio();
@@ -247,8 +247,8 @@ void Game::handleEvent(SDL_Event& event)
 void Game::update()
 {
     // 更新背景
-    far_stars_.update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
-    near_stars_.update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
+    far_stars_->update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
+    near_stars_->update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
 
     // 更新场景
     current_scene->update(std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count());
@@ -264,8 +264,8 @@ void Game::render()
     // SDL_RenderCopy(renderer.get(), img_texture, NULL, &img);
 
     // 渲染背景
-    far_stars_.render();
-    near_stars_.render();
+    far_stars_->render();
+    near_stars_->render();
 
     current_scene->render();
     SDL_RenderPresent(renderer.get());
@@ -278,7 +278,7 @@ SDL_Renderer* Game::getRenderer() const
 
 TTF_Font* Game::getFont(FontType font_type)
 {
-    return font_manager_.getFont(font_type);
+    return font_manager_->getFont(font_type);
 }
 
 bool& Game::getIsRunning()
@@ -320,12 +320,12 @@ float Game::getRandomFloat() const noexcept
 
 Mix_Chunk* Game::getChunk(ChunkType type)
 {
-    return music_manager_.getChunk(type);
+    return music_manager_->getChunk(type);
 }
 
 Mix_Music* Game::getBackgroundMusic(MusicType type)
 {
-    return music_manager_.getBackgroundMusic(type);
+    return music_manager_->getBackgroundMusic(type);
 }
 
 int Game::getFinalScore() const
@@ -396,6 +396,13 @@ Game& Game::init()
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "sdl ttf init failed %s\n", SDL_GetError());
         is_running = false;
     }
+
+    // 初始化字体和音乐管理器
+    static MusicManager mu;
+    static FontManager fo;
+    music_manager_ = &mu;
+    font_manager_ = &fo;
+
     // 创建场景
     current_scene = std::make_unique<SceneTitle>();
     current_scene->init();
@@ -405,8 +412,10 @@ Game& Game::init()
     frame_time = std::chrono::duration_cast<std::chrono::nanoseconds>(1s) / fps;
 
     // 初始化背景
-    far_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-B.png"), 20.f);
-    near_stars_ = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-A.png"));
+    static Background far = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-B.png"), 20.f);
+    static Background near = Background(IMG_LoadTexture(renderer.get(), "../../assets/image/Stars-A.png"));
+    far_stars_ = &far;
+    near_stars_ = &near;
 
     // 加载排行榜
     loadLeaderboard();
